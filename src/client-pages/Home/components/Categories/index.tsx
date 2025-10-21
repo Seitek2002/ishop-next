@@ -8,7 +8,6 @@ import { vibrateClick } from 'utils/haptics';
 
 import Item from './Item';
 
-
 interface IProps {
   onCategoryChange: (id: number | undefined) => void;
   onSearchChange: (bool: boolean) => void;
@@ -16,7 +15,12 @@ interface IProps {
   onCategoryTitleChange?: (title: string) => void;
 }
 
-const Categories: FC<IProps> = ({ onCategoryChange, onSearchChange, selectedCategory, onCategoryTitleChange }) => {
+const Categories: FC<IProps> = ({
+  onCategoryChange,
+  onSearchChange,
+  selectedCategory,
+  onCategoryTitleChange,
+}) => {
   const params = useParams<{ venue: string }>();
   const [isShow, setIsShow] = useState(false);
   const { data: categories } = useGetCategoriesQuery(
@@ -60,11 +64,12 @@ const Categories: FC<IProps> = ({ onCategoryChange, onSearchChange, selectedCate
       } else if (id === -1) {
         onCategoryTitleChange(t('search'));
       } else {
-        const title = categories?.find((c: { id: number; categoryName: string }) => c.id === id)?.categoryName;
+        const title = categories?.find(
+          (c: { id: number; categoryName: string }) => c.id === id
+        )?.categoryName;
         onCategoryTitleChange(title || t('allDishes'));
       }
     }
-
   };
 
   return (

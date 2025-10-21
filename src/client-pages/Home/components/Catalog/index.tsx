@@ -102,6 +102,8 @@ const Catalog: FC<IProps> = ({
     });
   }, [items, selectedCategory]);
 
+  const nothingSrc = typeof nothing === 'string' ? nothing : (nothing as unknown as { src?: string })?.src || '/assets/images/not-found-products.png';
+
   return (
     <section className='catalog'>
       <FoodDetail
@@ -126,6 +128,7 @@ const Catalog: FC<IProps> = ({
               },
             ],
             id: 0,
+            quantity: 0,
           }
         }
       />
@@ -169,7 +172,7 @@ const Catalog: FC<IProps> = ({
           <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
             Увы, ничего не найдено{'('}
           </h3>
-          <img src={nothing} alt='' className='w-1/2' />
+          <img src={nothingSrc} alt='' className='w-1/2' />
         </div>
       )}
     </section>

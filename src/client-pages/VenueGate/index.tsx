@@ -2,8 +2,8 @@
 import { FC, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import Home from 'pages/Home';
-import NotFound from 'pages/NotFound';
+import Home from 'client-pages/Home';
+import NotFound from 'client-pages/NotFound';
 import { useGetVenueQuery } from 'api/Venue.api';
 import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
@@ -16,6 +16,7 @@ const VenueGate: FC = () => {
   const { venue, venueId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const pathname = location?.pathname ?? '/';
   const dispatch = useAppDispatch();
   const usersData = useAppSelector((s) => s.yourFeature.usersData);
 
@@ -29,16 +30,16 @@ const VenueGate: FC = () => {
     if (ref !== null) localStorage.setItem('refId', String(ref));
 
     if (promo || ref) {
-      navigate(location.pathname || '/', { replace: true });
+      navigate(pathname, { replace: true });
     }
-  }, [location.search, location.pathname, navigate]);
+  }, [location.search, pathname, navigate]);
 
   // Set order mode by URL:
   // - "/:venue/:venueId/s" => pickup (type = 2) and set activeSpot = venueId
   // - "/:venue" => delivery (type = 3)
   // Note: table route is removed
   useEffect(() => {
-    const isPickup = location.pathname.endsWith('/s');
+    const isPickup = pathname.endsWith('/s');
     const spotId = venueId ? Number(venueId) : undefined;
 
     const nextType = isPickup ? 2 : 3; // 2: Самовывоз, 3: Доставка
@@ -55,7 +56,7 @@ const VenueGate: FC = () => {
     if (usersData?.type !== nextUsers.type || usersData?.activeSpot !== nextUsers.activeSpot) {
       dispatch(setUsersData(nextUsers));
     }
-  }, [location.pathname, venueId, usersData, dispatch]);
+  }, [pathname, venueId, usersData, dispatch]);
 
   const { data, isError, isLoading } = useGetVenueQuery({
     venueSlug: venue || '',

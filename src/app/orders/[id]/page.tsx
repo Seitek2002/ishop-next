@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Order from "@/pages/Order";
+import Order from "@/client-pages/Order";
 
 export default function OrderPage() {
   return <Order />;

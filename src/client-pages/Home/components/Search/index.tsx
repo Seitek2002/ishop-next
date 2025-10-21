@@ -80,6 +80,7 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
               },
             ],
             id: 0,
+            quantity: 0,
           }
         }
       />
@@ -173,7 +174,7 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
               <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
                 Увы, ничего не найдено{'('}
               </h3>
-              <img src={nothing} alt='' className='w-full' />
+              <img src={typeof nothing === "string" ? nothing : (nothing as unknown as { src?: string })?.src || "/assets/images/not-found-products.png"} alt='' className='w-full' />
             </div>
           ) : sortedItems.length > 0 ? (
             <div className='search__catalog'>
@@ -190,7 +191,7 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
               <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
                 Увы, ничего не найдено{'('}
               </h3>
-              <img src={nothing} alt='' className='w-full' />
+              <img src={typeof nothing === "string" ? nothing : (nothing as unknown as { src?: string })?.src || "/assets/images/not-found-products.png"} alt='' className='w-full' />
             </div>
           )
         )}

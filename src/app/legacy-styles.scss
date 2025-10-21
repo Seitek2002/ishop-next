@@ -22,12 +22,12 @@
 @import "../components/WeeklyScheduleModal/index.scss";
 
 /* Pages */
-@import "../pages/Cart/style.scss";
-@import "../pages/NotFound/style.scss";
-@import "../pages/Order/style.scss";
-@import "../pages/SelectOrderType/style.scss";
+@import "../client-pages/Cart/style.scss";
+@import "../client-pages/NotFound/style.scss";
+@import "../client-pages/Order/style.scss";
+@import "../client-pages/SelectOrderType/style.scss";
 
 /* Home sub-components */
-@import "../pages/Home/components/Catalog/style.scss";
-@import "../pages/Home/components/Categories/style.scss";
-@import "../pages/Home/components/Search/style.scss";
+@import "../client-pages/Home/components/Catalog/style.scss";
+@import "../client-pages/Home/components/Categories/style.scss";
+@import "../client-pages/Home/components/Search/style.scss";

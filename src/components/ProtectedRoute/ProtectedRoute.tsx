@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { useAppSelector } from 'hooks/useAppSelector';
@@ -15,7 +15,7 @@ const isAuthenticated = (): boolean => {
   }
 };
 
-const ProtectedRoute = ({ children }: { children?: any }) => {
+const ProtectedRoute = ({ children }: { children?: ReactNode }) => {
   // Hooks must be declared unconditionally
   const [showClosed, setShowClosed] = useState(false);
   const [redirect, setRedirect] = useState(false);

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { statusMessages } from 'pages/Order/enums';
+import { statusMessages } from 'client-pages/Order/enums';
 import { useGetOrdersQuery } from 'api/Orders.api';
 import { IOrder } from 'types/orders.types';
 import { vibrateClick } from 'utils/haptics';

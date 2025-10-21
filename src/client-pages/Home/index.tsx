@@ -61,7 +61,7 @@ const Home = () => {
   }, [searchText]);
 
   return (
-    <div className='relative font-inter bg-[#F1F2F3] px-[16px] pt-[12px] lg:max-w-[1140px] lg:mx-auto'>
+    <div className='relative font-inter bg-[#F1F2F3] px-[16px] pt-[12px] pb-[60px] lg:max-w-[1140px] lg:mx-auto'>
       <ClearCartModal isShow={active} setActive={setActive} />
       <Header searchText={searchText} setSearchText={setSearchText} />
       <div className='flex gap-[30px] items-start pb-[50px] w-full'>

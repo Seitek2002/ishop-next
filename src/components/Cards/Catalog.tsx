@@ -166,6 +166,8 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail }) => {
             от {+item.modificators[0].price} с
           </span>
         </div>
+      ) : item.quantity === 0 ? (
+        <span className='text-center text-[red]'>Нет в наличии</span>
       ) : (
         <div className='cart-info'>
           <span className='cart-price' style={{ color: colorTheme }}>
@@ -174,9 +176,6 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail }) => {
         </div>
       )}
       <h4 className='cart-name'>{item.productName}</h4>
-      {item.quantity === 0 && (
-        <span className='text-center text-[red]'>Нет в наличии</span>
-      )}
     </div>
   );
 };

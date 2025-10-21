@@ -1,0 +1,33 @@
+@reference "tailwindcss";
+
+/* Tailwind v4 theme tokens used by legacy classes like `font-benzin` */
+@theme inline {
+  --font-benzin: "Benzin", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-baloo: "Baloo 2", sans-serif;
+}
+
+/* Aggregate original global SCSS so Next.js allows a single global import from app/layout.tsx */
+/* Project-level */
+@import "../App.scss";
+
+/* Components */
+@import "../components/BusketDesktop/style.scss";
+@import "../components/Cards/style.scss";
+@import "../components/Header/SubHeader/style.scss";
+@import "../components/Header/SupHeader/style.scss";
+@import "../components/Hero/style.scss";
+@import "../components/ClearCartModal/index.scss";
+@import "../components/PointsModal/index.scss";
+@import "../components/WeeklyScheduleModal/index.scss";
+
+/* Pages */
+@import "../pages/Cart/style.scss";
+@import "../pages/NotFound/style.scss";
+@import "../pages/Order/style.scss";
+@import "../pages/SelectOrderType/style.scss";
+
+/* Home sub-components */
+@import "../pages/Home/components/Catalog/style.scss";
+@import "../pages/Home/components/Categories/style.scss";
+@import "../pages/Home/components/Search/style.scss";

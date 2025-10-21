@@ -8,6 +8,7 @@ import { vibrateClick } from 'utils/haptics';
 import defaultProduct from 'assets/images/default-product.svg';
 
 import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
+import Image from 'next/image';
 
 interface IProps {
   item: IProduct;
@@ -79,7 +80,7 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail }) => {
         {!isLoaded && (
           <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
         )}
-        <img
+        <Image
           src={srcCandidate}
           alt={item.productName || 'product'}
           onLoad={() => setIsLoaded(true)}

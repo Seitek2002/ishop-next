@@ -107,11 +107,12 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail }) => {
                 vibrateClick();
                 handleDecrement();
               }}
-              className='absolute flex items-center justify-center'
+              className='absolute items-center justify-center'
               style={{
                 width: foundCartItem?.quantity ? 18 : 0,
                 height: 18,
                 left: foundCartItem?.quantity ? 0 : 100,
+                display: foundCartItem?.quantity ? 'flex' : 'none',
                 transition: '0.5s',
                 color: '#fff',
                 lineHeight: '18px',

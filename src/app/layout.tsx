@@ -3,6 +3,12 @@ import "./globals.css";
 import "./legacy-styles.scss";
 import Providers from "./providers";
 import WsGuard from "@/components/WsGuard";
+import { Inter } from "next/font/google";
+
+const geistInter = Inter({
+  variable: "--font-geist-inter",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "ishop",
@@ -21,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body>
+      <body className={`${geistInter.variable} antialiased`}>
         <WsGuard />
         <Providers>{children}</Providers>
       </body>

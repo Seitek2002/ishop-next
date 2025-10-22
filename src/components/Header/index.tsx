@@ -12,7 +12,7 @@ const Header: FC<IProps> = ({ searchText, setSearchText }) => {
   return (
     <header className='bg-white rounded-[12px] p-[12px]'>
       <SupHeader searchText={searchText} setSearchText={setSearchText} />
-      <hr className='my-[10px]' />
+      <hr className='my-[10px] border-[#e5e7eb]' />
       <SubHeader />
     </header>
   );

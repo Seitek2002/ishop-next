@@ -60,7 +60,7 @@ const Catalog: FC<IProps> = ({
     setIsShow(true);
     setActiveFood(food);
     document.body.style.height = '100dvh';
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'auto';
   };
 
   function getCartItemPrice(item: IFoodCart): number {

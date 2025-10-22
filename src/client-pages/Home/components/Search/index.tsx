@@ -154,6 +154,7 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
               id='mobile-search'
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
+              className='flex-1'
             />
           </label>
         </div>

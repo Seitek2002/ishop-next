@@ -159,6 +159,29 @@ const Cart: React.FC = () => {
     { skip: !venueData?.slug }
   );
 
+  const recommendedItems = useMemo(
+    () =>
+      (data?.filter((it) => it.isRecommended) ?? [])
+        .slice()
+        .sort((a, b) => {
+          const sa = Number.isFinite(a.quantity) && a.quantity > 0 ? 1 : 0;
+          const sb = Number.isFinite(b.quantity) && b.quantity > 0 ? 1 : 0;
+          if (sb !== sa) return sb - sa;
+
+          const ha =
+            (a.productPhoto || a.productPhotoSmall || a.productPhotoLarge) ? 1 : 0;
+          const hb =
+            (b.productPhoto || b.productPhotoSmall || b.productPhotoLarge) ? 1 : 0;
+          if (hb !== ha) return hb - ha;
+
+          const an = (a.productName || '').localeCompare(b.productName || '');
+          if (an !== 0) return an;
+
+          return (a.id || 0) - (b.id || 0);
+        }),
+    [data]
+  );
+
   const inputRef = useMask({
     mask: '+996_________',
     replacement: { _: /\d/ },
@@ -806,7 +829,7 @@ const Cart: React.FC = () => {
 
         <Recommended
           t={t}
-          items={data?.filter((it) => it.isRecommended) ?? []}
+          items={recommendedItems}
           renderItem={(item) => (
             <CatalogCard
               foodDetail={handleOpen}

@@ -91,13 +91,19 @@ const Catalog: FC<IProps> = ({
     const hasPhoto = (p: IProduct) =>
       Boolean(p.productPhoto || p.productPhotoSmall || p.productPhotoLarge);
 
-    // Items with photo first; stable tie-breaker by name then id
+    // In-stock first, then items with photo; stable tie-breaker by name then id
     return [...base].sort((a, b) => {
+      const sa = Number.isFinite(a.quantity) && a.quantity > 0 ? 1 : 0;
+      const sb = Number.isFinite(b.quantity) && b.quantity > 0 ? 1 : 0;
+      if (sb !== sa) return sb - sa;
+
       const ha = hasPhoto(a) ? 1 : 0;
       const hb = hasPhoto(b) ? 1 : 0;
       if (hb !== ha) return hb - ha;
+
       const an = (a.productName || '').localeCompare(b.productName || '');
       if (an !== 0) return an;
+
       return (a.id || 0) - (b.id || 0);
     });
   }, [items, selectedCategory]);

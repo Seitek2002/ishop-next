@@ -1,459 +1,533 @@
+"use client";
+
+import {
+  ArrowRight,
+  Sparkles,
+  Clock,
+  Package,
+  Warehouse,
+  Percent,
+  Megaphone,
+  Zap,
+  Brain,
+  Users,
+  BarChart3,
+  Link2,
+  Award,
+  TrendingUp,
+  Target,
+  Shield,
+  Phone,
+  Loader2,
+  CheckCircle,
+} from "lucide-react";
+import { useState, FormEvent } from "react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { Clock, Mail, MapPin, Phone, Plus, Star } from "lucide-react";
+
+// Base brand color used across gradients and accents
+const BRAND = {
+  base: "#854C9D",
+  baseDark: "#6f3f90",
+  baseDarker: "#4a2b63",
+  light100: "#F4ECF8",
+  light200: "#EDE3F5",
+};
+
+const features: Array<{ icon: LucideIcon; title: string; description: string; highlight?: boolean }> = [
+  {
+    icon: Clock,
+    title: "Продажи 24/7",
+    description:
+      "Ваш магазин работает круглосуточно без выходных, принимая заказы в любое время",
+  },
+  {
+    icon: Package,
+    title: "Точный товарный учёт",
+    description:
+      "Полный контроль над движением товаров с автоматическим обновлением остатков",
+  },
+  {
+    icon: Warehouse,
+    title: "Умное управление складом",
+    description:
+      "Автоматизированная система контроля остатков и уведомлений о необходимости пополнения",
+  },
+  {
+    icon: Percent,
+    title: "Скидки и бонусы",
+    description:
+      "Гибкая система скидок, промокодов и программа лояльности для ваших клиентов",
+  },
+  {
+    icon: Megaphone,
+    title: "Автоматизация маркетинга",
+    description: "Умные рассылки, напоминания, акции и бонусная программа",
+  },
+  { icon: Zap, title: "Ускорение процессов", description: "Автоматическая обработка заказов, формирование документов и отчетов" },
+  {
+    icon: Brain,
+    title: "Встроенные AI-инструменты",
+    description:
+      "Искусственный интеллект для улучшения фото, разнавания накладных, общения с клиентами и т.д.",
+    highlight: true,
+  },
+  {
+    icon: Users,
+    title: "Запоминание покупателей",
+    description:
+      "Система профилей клиентов с историей покупок и персональными предпочтениями",
+  },
+  {
+    icon: BarChart3,
+    title: "Сбор данных и аналитика",
+    description:
+      "Подробная статистика продаж, поведения клиентов и эффективности маркетинга",
+  },
+  { icon: Link2, title: "Интеграции", description: "Подключение CRM, складских систем, логистики, платежных шлюзов и мессенджеров" },
+  { icon: Award, title: "Укрепление бренда", description: "Полная кастомизация дизайна магазина под ваш фирменный стиль" },
+];
 
 export default function Page() {
+  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      // Layout-only: mock submit success
+      await new Promise((r) => setTimeout(r, 800));
+      setSuccess(true);
+      setPhone("");
+      setTimeout(() => setSuccess(false), 4000);
+    } catch {
+      setError("Произошла ошибка. Пожалуйста, попробуйте позже.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white min-h-screen">
-      <header className="bg-white shadow-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 flex gap-[10px]">
-                <img
-                  className="h-8 w-8"
-                  src="/assets/icons/header-logo.svg"
-                  alt="iMenu Logo"
-                />
-                <h1 className="text-2xl font-bold text-[#854C9D]">ishop.kg</h1>
-              </div>
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            <div className="flex items-center space-x-3">
+              <img src="/assets/icons/header-logo.svg" alt="iShop" className="h-8 sm:h-10" />
+              <span className="text-xl sm:text-2xl font-bold" style={{ color: BRAND.base }}>
+                iShop.kg
+              </span>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="hidden lg:flex items-center space-x-2 text-gray-600">
-                <Phone className="h-5 w-5 text-[#854C9D]" />
-                <a
-                  href="tel:+996706204501"
-                  className="text-sm hover:text-[#854C9D] transition-colors"
-                >
-                  +996 706 204 501
-                </a>
-              </div>
-              <Link
-                className="bg-[#854C9D] hover:bg-[#6f3f90] text-white py-2 px-4 rounded"
-                href="/Exponenta"
+
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <a
+                href="#contact"
+                className="hidden sm:inline-block px-4 py-2 font-medium transition-colors"
+                style={{ color: BRAND.base }}
+              >
+                Связаться
+              </a>
+              <a
+                href="https://ishop.kg/Exponenta"
+                className="px-4 sm:px-6 py-2 sm:py-2.5 text-white font-medium rounded-lg transition-all hover:shadow-lg hover:scale-105"
+                style={{ backgroundColor: BRAND.base }}
               >
                 Демо
-              </Link>
+              </a>
             </div>
           </div>
         </div>
       </header>
 
-      <section className="bg-gradient-to-br from-[#F4ECF8] to-[#EDE3F5] py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Найдите лучшие
-              <span className="text-[#854C9D] block">заведения Кыргызстана</span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Откройте для себя рестораны, кафе и другие заведения с подробными
-              меню, отзывами и актуальной информацией
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <div className="flex items-center space-x-2 text-gray-600">
-                <MapPin className="h-5 w-5 text-[#854C9D]" />
-                <span>По всему Кыргызстану</span>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-600">
-                <Clock className="h-5 w-5 text-[#854C9D]" />
-                <span>Актуальные часы работы</span>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-600">
-                <Star className="h-5 w-5 text-[#854C9D]" />
-                <span>Честные отзывы</span>
-              </div>
+      {/* Hero */}
+      <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-24 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-gradient-to-br"
+          style={{
+            backgroundImage: `linear-gradient(to bottom right, ${BRAND.base}, ${BRAND.baseDark}, ${BRAND.baseDarker})`,
+          }}
+        />
+
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl" />
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 sm:mb-8">
+              <Sparkles className="w-4 h-4" style={{ color: "#FDE68A" }} />
+              <span className="text-white text-sm font-medium">Платформа нового поколения</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <div className="text-3xl font-bold text-[#854C9D] mb-2">500+</div>
-                <div className="text-gray-600">Заведений</div>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <div className="text-3xl font-bold text-[#854C9D] mb-2">10K+</div>
-                <div className="text-gray-600">Отзывов</div>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <div className="text-3xl font-bold text-[#854C9D] mb-2">50K+</div>
-                <div className="text-gray-600">Пользователей</div>
-              </div>
-            </div>
-            <div className="text-center mt-10">
-              <a
-                href="https://wa.me/996706204501"
-                target="_blank"
-                rel="noopener"
-                className="inline-block mt-4 bg-[#854C9D] text-white px-8 py-3 rounded-lg hover:bg-[#6f3f90] transition-colors font-medium text-lg"
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 sm:mb-8 leading-tight">
+              Ваш брендированный интернет-магазин за 1 день
+              <span
+                className="block mt-2 pb-2 bg-clip-text text-transparent"
+                style={{ backgroundImage: "linear-gradient(to right, #FDE68A, #F9A8D4)" }}
               >
-                Добавить заведение бесплатно
+                с iShop.kg
+              </span>
+            </h1>
+
+            <p className="text-lg sm:text-xl mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed" style={{ color: "#E7DFF0" }}>
+              Мы умеем общаться с клиентами, принимать заказы и обрабатывать, разбивать накладные и автозаполнение, следить за работой продавцов
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
+                href="#contact"
+                className="w-full sm:w-auto px-8 py-4 bg-white font-semibold rounded-lg transition-all hover:shadow-2xl hover:scale-105 flex items-center justify-center space-x-2"
+                style={{ color: BRAND.base }}
+              >
+                <span>Начать бесплатно</span>
+                <ArrowRight className="w-5 h-5" />
+              </a>
+              <a
+                href="#features"
+                className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg border-2 border-white/30 hover:bg-white/20 transition-all"
+              >
+                Узнать больше
               </a>
             </div>
+
+            <div className="mt-12 sm:mt-16 grid grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">24/7</div>
+                <div className="text-sm" style={{ color: "#D9CDE7" }}>Продажи</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">AI</div>
+                <div className="text-sm" style={{ color: "#D9CDE7" }}>Инструменты</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">∞</div>
+                <div className="text-sm" style={{ color: "#D9CDE7" }}>Интеграции</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="add-business-section" className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-[#F4ECF8] to-[#EDE3F5] rounded-2xl">
-            <div
-              className="w-full px-8 py-6 flex items-center hover:bg-[#F3EAF9] transition-colors"
-              style={{ justifyContent: "flex-start" }}
-            >
-              <div className="flex items-center space-x-4">
-                <div className="bg-[#854C9D] p-3 rounded-full flex items-center justify-center">
-                  <a href="https://wa.me/996706204501" target="_blank" rel="noopener">
-                    <Plus className="h-6 w-6 text-white" />
-                  </a>
-                </div>
-                <div className="text-left">
-                  <h3 className="text-2xl font-bold text-gray-900">
-                    Добавить свое заведение
-                  </h3>
-                </div>
-              </div>
-            </div>
-            <div id="add-business-content" className="opacity-100">
-              <div className="px-8 pb-8">
-                <div className="border-t border-gray-200 pt-8">
-                  <div className="mb-12">
-                    <h4 className="text-2xl font-bold text-center text-gray-900 mb-8">
-                      Решение
-                    </h4>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full bg-white rounded-xl shadow text-left">
-                        <thead>
-                          <tr>
-                            <th className="py-3 px-2 text-base font-semibold text-gray-700 border-b">
-                              Боль
-                            </th>
-                            <th className="py-3 px-2 text-base font-semibold text-gray-700 border-b">
-                              Как решаем
-                            </th>
-                            <th className="py-3 px-2 text-base font-semibold text-gray-700 border-b">
-                              Эффект за 1 год
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="bg-gray-50">
-                            <td className="py-2 px-2 border-b">Долгое ожидание</td>
-                            <td className="py-2 px-2 border-b">QR-меню «на стол»</td>
-                            <td className="py-2 px-2 border-b text-[#854C9D] font-semibold">
-                              +40%{" "}
-                              <span className="font-normal text-gray-700">
-                                к скорости обслуживания стола
-                              </span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="py-2 px-2 border-b">
-                              Нет <span className="underline text-[#854C9D]">предзаказа</span>
-                            </td>
-                            <td className="py-2 px-2 border-b">QR-меню «на вынос»</td>
-                            <td className="py-2 px-2 border-b text-[#854C9D] font-semibold">
-                              +25%{" "}
-                              <span className="font-normal text-gray-700">
-                                заказов «to-go»
-                              </span>
-                            </td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="py-2 px-2 border-b">Комиссия платформ до 25%</td>
-                            <td className="py-2 px-2 border-b">Комиссия 1,5%</td>
-                            <td className="py-2 px-2 border-b text-[#854C9D] font-semibold">
-                              до 18%{" "}
-                              <span className="font-normal text-gray-700">
-                                экономии на обороте
-                              </span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="py-2 px-2 border-b">Сложная оплата</td>
-                            <td className="py-2 px-2 border-b">
-                              QR-эквайринг всех банков КР
-                            </td>
-                            <td className="py-2 px-2 border-b text-[#854C9D] font-semibold">
-                              +12%{" "}
-                              <span className="font-normal text-gray-700">
-                                среднего чека
-                              </span>
-                            </td>
-                          </tr>
-                          <tr className="bg-gray-50">
-                            <td className="py-2 px-2 border-b">Потерянные клиенты</td>
-                            <td className="py-2 px-2 border-b">
-                              Сбор клиентов по номеру телефона
-                            </td>
-                            <td className="py-2 px-2 border-b text-[#854C9D] font-semibold">
-                              Рост{" "}
-                              <span className="font-normal text-gray-700">
-                                лояльной базы
-                              </span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="py-2 px-2 border-b">Отсутствие коммуникации</td>
-                            <td className="py-2 px-2 border-b">Уведомления в Telegram</td>
-                            <td className="py-2 px-2 border-b text-[#854C9D] font-semibold">
-                              Рост{" "}
-                              <span className="font-normal text-gray-700">
-                                повторных продаж
-                              </span>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="text-2xl font-bold text-center text-gray-900 mb-8">
-                      Функции iMenu
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div>
-                        <div className="flex items-center mb-2">
-                          <span className="flex items-center justify-center bg-pink-600 text-white font-bold rounded-full w-10 h-10 mr-3 text-lg">
-                            1
-                          </span>
-                          <span className="text-lg font-semibold">
-                            QR-меню «на вынос»
-                          </span>
-                        </div>
-                        <ul className="list-disc list-inside text-gray-700 mb-6 ml-12">
-                          <li>QR на стойке/витрине</li>
-                          <li>Заказ без очереди, оплачивает сразу онлайн</li>
-                          <li>Снижение «очереди» у кассы в часы пик</li>
-                        </ul>
-                        <div className="flex items-center mb-2">
-                          <span className="flex items-center justify-center bg-pink-600 text-white font-bold rounded-full w-10 h-10 mr-3 text-lg">
-                            2
-                          </span>
-                          <span className="text-lg font-semibold">
-                            Онлайн-меню по ссылке
-                          </span>
-                        </div>
-                        <ul className="list-disc list-inside text-gray-700 mb-6 ml-12">
-                          <li>
-                            Размещается в{" "}
-                            <span className="underline text-blue-600">Instagram</span>, сайте,
-                            мессенджерах.
-                          </li>
-                          <li>Доставка или самовывоз в 1 клик</li>
-                          <li>
-                            Заказ «на диване» вместо{" "}
-                            <span className="underline text-[#854C9D]">Glovных</span>{" "}
-                            конкурентов.
-                          </li>
-                        </ul>
-                        <div className="flex items-center mb-2">
-                          <span className="flex items-center justify-center bg-pink-600 text-white font-bold rounded-full w-10 h-10 mr-3 text-lg">
-                            3
-                          </span>
-                          <span className="text-lg font-semibold">
-                            Киоск самообслуживания
-                          </span>
-                        </div>
-                        <ul className="list-disc list-inside text-gray-700 mb-6 ml-12">
-                          <li>Сенсорный терминал в зале как в KFC.</li>
-                          <li>Клиенты формируют заказ сами, касса не создаёт пробку</li>
-                          <li>
-                            Средний чек <span className="text-green-600 font-bold">↑</span>{" "}
-                            за счёт автоматических рекомендаций
-                          </li>
-                        </ul>
-                      </div>
-                      <div>
-                        <div className="flex items-center mb-2">
-                          <span className="flex items-center justify-center bg-pink-600 text-white font-bold rounded-full w-10 h-10 mr-3 text-lg">
-                            4
-                          </span>
-                          <span className="text-lg font-semibold">ИИ-оператор</span>
-                        </div>
-                        <ul className="list-disc list-inside text-gray-700 mb-6 ml-12">
-                          <li>24/7 WhatsApp, Telegram, Instagram</li>
-                          <li>Принимает заказ и оплату</li>
-                          <li>Заказ сразу уходит на кухню и печатает чек</li>
-                          <li>
-                            Интеграция с кассовым ПО (
-                            <span className="underline text-blue-600">Poster и др</span>)
-                          </li>
-                          <li>QR + NFC наклейки опционально</li>
-                        </ul>
-                        <div className="flex items-center mb-2">
-                          <span className="flex items-center justify-center bg-pink-600 text-white font-bold rounded-full w-10 h-10 mr-3 text-lg">
-                            5
-                          </span>
-                          <span className="text-lg font-semibold">
-                            Администраторская панель
-                          </span>
-                        </div>
-                        <ul className="list-disc list-inside text-gray-700 mb-6 ml-12">
-                          <li>Настраиваемая программа лояльности</li>
-                          <li>Учет всех заказов и отчетность</li>
-                          <li>Статусы заказов в реальном времени</li>
-                          <li>Управление меню, ценами, акциями</li>
-                          <li>
-                            CRM: база гостей, отчёты по продажам,{" "}
-                            <span className="underline text-blue-600">ретаргетинг</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col items-center justify-center pb-[20px]">
-                <a
-                  href="https://wa.me/996706204501"
-                  target="_blank"
-                  rel="noopener"
-                  className="inline-block mt-4 bg-[#854C9D] text-white px-8 py-3 rounded-lg hover:bg-[#6f3f90] transition-colors font-medium text-lg"
+      {/* Features */}
+      <section id="features" className="py-16 sm:py-24 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
+              Всё необходимое для успешных продаж
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600">
+              11 мощных инструментов для роста вашего бизнеса в одной платформе
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={index}
+                  className={`group relative p-6 sm:p-8 bg-white rounded-2xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
+                    feature.highlight ? "ring-2" : "shadow-md hover:shadow-gray-100"
+                  }`}
+                  style={feature.highlight ? { boxShadow: `0 0 0 2px ${BRAND.base}` } : undefined}
                 >
-                  Добавить заведение бесплатно
-                </a>
+                  {feature.highlight && (
+                    <div
+                      className="absolute -top-3 -right-3 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg"
+                      style={{ backgroundImage: `linear-gradient(to bottom right, ${BRAND.base}, ${BRAND.baseDark})` }}
+                    >
+                      NEW
+                    </div>
+                  )}
+
+                  <div
+                    className={`inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl mb-4 sm:mb-6 transition-all duration-300`}
+                    style={{ backgroundColor: feature.highlight ? BRAND.base : `${BRAND.light100}` }}
+                  >
+                    <Icon className="w-6 h-6 sm:w-7 sm:h-7" style={{ color: feature.highlight ? "#fff" : BRAND.base }} />
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Detailed Features (3 sections) */}
+      <section className="py-16 sm:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="space-y-24 sm:space-y-32">
+            {/* AI */}
+            <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+              <div className="order-2 lg:order-1">
+                <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full mb-4 sm:mb-6" style={{ backgroundColor: BRAND.light100 }}>
+                  <Brain className="w-4 h-4" style={{ color: BRAND.base }} />
+                  <span className="text-sm font-medium" style={{ color: BRAND.baseDark }}>AI-технологии</span>
+                </div>
+                <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">Встроенные AI-инструменты</h3>
+                <p className="text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
+                  Используйте мощь искусственного интеллекта для улучшения визуального контента, работы с документами и общения с клиентами. ИИ помогает автоматически обрабатывать фото товаров, распознавать накладные и ускорять ответы на запросы покупателей
+                </p>
+                <ul className="space-y-4">
+                  {[
+                    "Улучшение фото товаров (автообработка, выравнивание фона, повышение качества)",
+                    "Распознавание накладных и документов с автозаполнением данных",
+                    "Умные ответы на вопросы клиентов в чате и мессенджерах",
+                    "Автоматическая генерация текстов: описания товаров и типовые ответы",
+                  ].map((txt, i) => (
+                    <li key={i} className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5" style={{ backgroundColor: BRAND.light100 }}>
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: BRAND.base }} />
+                      </div>
+                      <span className="text-gray-700">{txt}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="order-1 lg:order-2">
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-3xl transform rotate-3" style={{ backgroundImage: `linear-gradient(to bottom right, ${BRAND.base}, ${BRAND.baseDark})` }} />
+                  <div className="relative rounded-3xl p-8 sm:p-12 text-white" style={{ backgroundImage: `linear-gradient(to bottom right, ${BRAND.base}, ${BRAND.baseDark})` }}>
+                    <Brain className="w-16 h-16 sm:w-20 sm:h-20 mb-6 opacity-90" />
+                    <div className="text-5xl sm:text-6xl font-bold mb-2">95%</div>
+                    <div className="text-lg" style={{ color: "#E7DFF0" }}>точность прогнозов</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Analytics */}
+            <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+              <div>
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-3xl transform -rotate-3" style={{ backgroundImage: `linear-gradient(to bottom right, ${BRAND.base}, ${BRAND.baseDark})` }} />
+                  <div className="relative bg-white border-2 rounded-3xl p-8 sm:p-12" style={{ borderColor: BRAND.light200 }}>
+                    <TrendingUp className="w-16 h-16 sm:w-20 sm:h-20 mb-6" style={{ color: BRAND.base }} />
+                    <div className="text-5xl sm:text-6xl font-bold text-gray-900 mb-2">3x</div>
+                    <div className="text-lg text-gray-600">рост конверсии</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full mb-4 sm:mb-6" style={{ backgroundColor: BRAND.light100 }}>
+                  <Target className="w-4 h-4" style={{ color: BRAND.base }} />
+                  <span className="text-sm font-medium" style={{ color: BRAND.baseDark }}>Аналитика</span>
+                </div>
+                <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">Сбор данных и глубокая аналитика</h3>
+                <p className="text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
+                  Получайте полное представление о вашем бизнесе. Отслеживайте ключевые метрики в
+                  реальном времени, анализируйте поведение клиентов и принимайте решения на основе
+                  данных.
+                </p>
+                <ul className="space-y-4">
+                  {[
+                    "Дашборды с ключевыми метриками в реальном времени",
+                    "Анализ пути покупателя и точек выхода",
+                    "Когортный анализ и сегментация аудитории",
+                    "Автоматические отчеты и экспорт данных",
+                  ].map((txt, i) => (
+                    <li key={i} className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5" style={{ backgroundColor: BRAND.light100 }}>
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: BRAND.base }} />
+                      </div>
+                      <span className="text-gray-700">{txt}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Integrations */}
+            <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+              <div className="order-2 lg:order-1">
+                <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full mb-4 sm:mb-6" style={{ backgroundColor: BRAND.light100 }}>
+                  <Shield className="w-4 h-4" style={{ color: BRAND.base }} />
+                  <span className="text-sm font-medium" style={{ color: BRAND.baseDark }}>Интеграции</span>
+                </div>
+                <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">Полная экосистема интеграций</h3>
+                <p className="text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
+                  Подключите все необходимые сервисы и инструменты. CRM-системы, складской учет,
+                  логистические партнеры, платежные системы, мессенджеры и маркетинговые сервисы
+                  работают вместе в единой экосистеме.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    ["CRM системы", "1C, Bitrix24, AmoCRM"],
+                    ["Платежи", "QR платежи, Все банки КР"],
+                    ["Логистика", "Яндекс GO, Glovo"],
+                    ["Мессенджеры", "WhatsApp, Telegram, Instagram DM"],
+                  ].map(([title, text], i) => (
+                    <div key={i} className="p-4 bg-gray-50 rounded-xl">
+                      <div className="font-semibold text-gray-900 mb-1">{title}</div>
+                      <div className="text-sm text-gray-600">{text}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="order-1 lg:order-2">
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-3xl transform rotate-3" style={{ backgroundImage: `linear-gradient(to bottom right, ${BRAND.base}, ${BRAND.baseDark})` }} />
+                  <div className="relative rounded-3xl p-8 sm:p-12 text-white" style={{ backgroundImage: `linear-gradient(to bottom right, ${BRAND.base}, ${BRAND.baseDark})` }}>
+                    <Shield className="w-16 h-16 sm:w-20 sm:h-20 mb-6 opacity-90" />
+                    <div className="text-5xl sm:text-6xl font-bold mb-2">50+</div>
+                    <div className="text-lg" style={{ color: "#E7DFF0" }}>готовых интеграций</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-br from-[#EDE3F5] to-[#F4ECF8]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-10">
-            Преимущества iMenu
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-xl shadow-sm text-center">
-              <thead>
-                <tr>
-                  <th className="py-4 px-2 text-lg font-semibold text-gray-700 border-b">
-                    Параметр
-                  </th>
-                  <th className="py-4 px-2 text-lg font-semibold text-[#854C9D] border-b">
-                    iMenu
-                  </th>
-                  <th className="py-4 px-2 text-lg font-semibold text-gray-500 border-b">
-                    Конкуренты
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="py-3 px-2 border-b">Стоимость подключения</td>
-                  <td className="py-3 px-2 border-b font-bold text-green-600">
-                    0 сом
-                  </td>
-                  <td className="py-3 px-2 border-b text-gray-700">
-                    10 000+ сом
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-2 border-b">Комиссия</td>
-                  <td className="py-3 px-2 border-b font-bold text-green-600">
-                    1,5%
-                  </td>
-                  <td className="py-3 px-2 border-b text-gray-700">20–30%</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-2 border-b">Срок запуска</td>
-                  <td className="py-3 px-2 border-b font-bold text-green-600">
-                    3 дня
-                  </td>
-                  <td className="py-3 px-2 border-b text-gray-700">7–10 дней</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-2 border-b">ИИ чат-оператор</td>
-                  <td className="py-3 px-2 border-b font-bold text-green-600">Да</td>
-                  <td className="py-3 px-2 border-b text-gray-700">—</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-2 border-b">Уведомления Telegram</td>
-                  <td className="py-3 px-2 border-b font-bold text-green-600">Да</td>
-                  <td className="py-3 px-2 border-b text-gray-700">—</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-2 border-b">Владение клиентской базой</td>
-                  <td className="py-3 px-2 border-b font-bold text-green-600">
-                    Остается у Вас
-                  </td>
-                  <td className="py-3 px-2 border-b text-gray-700">
-                    Принадлежит агрегатору
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      {/* Contact */}
+      <section id="contact" className="py-16 sm:py-24 relative overflow-hidden" style={{ backgroundImage: `linear-gradient(to bottom right, ${BRAND.base}, ${BRAND.baseDark}, ${BRAND.baseDarker})` }}>
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl" />
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
+                Начните зарабатывать больше уже сегодня
+              </h2>
+              <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: "#E7DFF0" }}>
+                Оставьте заявку, и наш специалист свяжется с вами для демонстрации платформы
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-12">
+              {success ? (
+                <div className="text-center py-12">
+                  <CheckCircle className="w-16 h-16 sm:w-20 sm:h-20 text-green-500 mx-auto mb-6" />
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                    Спасибо за заявку!
+                  </h3>
+                  <p className="text-lg text-gray-600">Мы свяжемся с вами в ближайшее время</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="max-w-xl mx-auto">
+                  <div className="mb-6">
+                    <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-3">
+                      Телефон *
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full pl-14 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none transition-colors focus:border-gray-400"
+                        placeholder="+996 XXX XXX XXX"
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+                      {error}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-4 text-white font-semibold rounded-xl transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    style={{ backgroundImage: `linear-gradient(to right, ${BRAND.base}, ${BRAND.baseDark})` }}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Отправка...</span>
+                      </>
+                    ) : (
+                      <span>Получить свой интернет-магазин</span>
+                    )}
+                  </button>
+
+                  <p className="text-center text-sm text-gray-500 mt-4">
+                    Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+                  </p>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold text-[#854C9D] mb-4">Ishop.kg</h3>
+              <h3 className="text-2xl font-bold mb-4" style={{ color: BRAND.base }}>
+                Ishop.kg
+              </h3>
               <p className="text-gray-300 mb-6 max-w-md">
-                Ваш надежный гид по лучшим заведениям Кыргызстана. Находите
-                рестораны, кафе и другие места с подробными меню и честными
-                отзывами.
+                Платформа для создания брендированных интернет-магазинов с AI-инструментами и полной
+                автоматизацией.
               </p>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <MapPin className="h-4 w-4 text-[#854C9D]" />
+                  <svg className="h-4 w-4" style={{ color: BRAND.base }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                   <span className="text-gray-300">г. Бишкек, Кыргызстан</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Phone className="h-4 w-4 text-[#854C9D]" />
-                  <a
-                    href="tel:+996706204501"
-                    className="text-gray-300 hover:text-[#854C9D] transition-colors"
-                  >
-                    +996 706 204 501
+                  <Phone className="h-4 w-4" style={{ color: BRAND.base }} />
+                  <a href="tel:+996774500600" className="text-gray-300 hover:opacity-80 transition-colors">
+                    +996 774 500 600
                   </a>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4 text-[#854C9D]" />
-                  <a
-                    href="mailto:adamtechkg@gmail.com"
-                    className="text-gray-300 hover:text-[#854C9D] transition-colors"
-                  >
-                    adamtechkg@gmail.com
+                  <svg className="h-4 w-4" style={{ color: BRAND.base }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16v16H4z"></path><path d="M22 6l-10 7L2 6"></path></svg>
+                  <a href="mailto:info@ishop.kg" className="text-gray-300 hover:opacity-80 transition-colors">
+                    info@ishop.kg
                   </a>
                 </div>
               </div>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Категории</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="text-gray-300 hover:text-[#854C9D] transition-colors">
-                    Рестораны
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-300 hover:text-[#854C9D] transition-colors">
-                    Кафе
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-300 hover:text-[#854C9D] transition-colors">
-                    Фастфуд
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-300 hover:text-[#854C9D] transition-colors">
-                    Кофейни
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-300 hover:text-[#854C9D] transition-colors">
-                    Бары
-                  </a>
-                </li>
+              <h4 className="text-lg font-semibold mb-4">Платформа</h4>
+              <ul className="space-y-2 text-gray-300">
+                <li><a href="#features" className="hover:opacity-80 transition-colors">Возможности</a></li>
+                <li><a href="#" className="hover:opacity-80 transition-colors">Цены</a></li>
+                <li><a href="#" className="hover:opacity-80 transition-colors">Интеграции</a></li>
+                <li><a href="#" className="hover:opacity-80 transition-colors">API</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Компания</h4>
+              <ul className="space-y-2 text-gray-300">
+                <li><a href="#" className="hover:opacity-80 transition-colors">О нас</a></li>
+                <li><a href="#" className="hover:opacity-80 transition-colors">Блог</a></li>
+                <li><a href="#" className="hover:opacity-80 transition-colors">Карьера</a></li>
+                <li><a href="#contact" className="hover:opacity-80 transition-colors">Контакты</a></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2024 ishop.kg. Все права защищены.
+              © {new Date().getFullYear()} ishop.kg. Все права защищены.
+            </div>
+            <div className="flex space-x-6 text-sm text-gray-400">
+              <Link href="/privacy" className="hover:opacity-80 transition-colors">Политика конфиденциальности</Link>
+              <a href="#" className="hover:opacity-80 transition-colors">Условия использования</a>
             </div>
           </div>
         </div>

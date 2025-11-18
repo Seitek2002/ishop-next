@@ -378,8 +378,31 @@ const Cart: React.FC = () => {
       }).unwrap();
 
       if (res?.paymentUrl) {
-        window.location.href = res.paymentUrl;
-        dispatch(clearCart());
+        const url = normalizePaymentUrl(res.paymentUrl);
+        if (!url) {
+          setIsLoading(false);
+          setServerError('Некорректная платежная ссылка');
+          return;
+        }
+        try {
+          // Clear cart when the page is actually leaving (more reliable on iOS)
+          const onPageHide = () => {
+            try { dispatch(clearCart()); } catch {}
+            window.removeEventListener('pagehide', onPageHide);
+          };
+          window.addEventListener('pagehide', onPageHide);
+
+          // iOS Safari friendly navigation
+          if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            window.location.assign(url);
+          } else {
+            window.location.href = url;
+          }
+          return; // Do not continue in this handler
+        } catch (e) {
+          setServerError('Не удалось перейти по платежной ссылке');
+          setIsLoading(false);
+        }
       } else if (res?.phoneVerificationHash) {
         try {
           localStorage.setItem('phoneVerificationHash', res.phoneVerificationHash);
@@ -645,6 +668,19 @@ const Cart: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Normalize paymentUrl returned from backend (may be string or object)
+  const normalizePaymentUrl = (pu: unknown): string | null => {
+    try {
+      if (typeof pu === 'string') return pu;
+      if (pu && typeof pu === 'object') {
+        const anyPu = pu as { url?: unknown; href?: unknown };
+        if (typeof anyPu.url === 'string') return anyPu.url;
+        if (typeof anyPu.href === 'string') return anyPu.href;
+      }
+    } catch {}
+    return null;
   };
 
   const openPointsFlow = () => {

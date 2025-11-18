@@ -647,6 +647,19 @@ const Cart: React.FC = () => {
     }
   };
 
+  const openPointsFlow = () => {
+    const digits = phoneNumber.replace(/\D/g, '');
+    if (!digits || digits.length < 12) {
+      try {
+        setPhoneError('Тут нужно минимум 12 символов');
+        const el = document.getElementById('phoneNumber');
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch {}
+      return;
+    }
+    setIsPointsModalOpen(true);
+  };
+
   return (
     <>
       <section className='cart relative font-inter bg-[#F1F2F3] px-[16px] pt-[40px] lg:max-w-[1140px] lg:mx-auto'>
@@ -766,7 +779,7 @@ const Cart: React.FC = () => {
                   setUsePoints={setUsePoints}
                   maxUsablePoints={maxUsablePoints}
                   setBonusPoints={setBonusPoints}
-                  onOpenPointsModal={() => setIsPointsModalOpen(true)}
+                  onOpenPointsModal={openPointsFlow}
                   displayTotal={displayTotal}
                   onShowNoPoints={() => setShowNoPoints(true)}
                 />

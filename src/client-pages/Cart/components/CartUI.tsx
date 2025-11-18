@@ -362,40 +362,26 @@ export const SumDetails: React.FC<{
 
       <div
         className='cart__sum-ress border-[#f3f3f3]'
-        style={{ display: availablePoints <= 0 ? 'none' : undefined, borderTop: '1px solid #f3f3f3' }}
+        style={{ borderTop: '1px solid #f3f3f3' }}
       >
         <div className='flex items-center justify-between w-full'>
-          <span className='flex items-center gap-2'>
-            <button
-              type='button'
-              aria-pressed={usePoints}
-              aria-label='Оплатить баллами'
-              onClick={() => {
+          <label className='flex items-center gap-2 cursor-pointer'>
+            <input
+              type='checkbox'
+              checked={usePoints}
+              onChange={(e) => {
                 vibrateClick();
-                if (availablePoints <= 0) {
-                  onShowNoPoints();
-                  return;
-                }
-                const nv = !usePoints;
-                setUsePoints(nv);
-                if (nv) {
-                  setBonusPoints(maxUsablePoints);
+                const checked = e.target.checked;
+                if (checked) {
                   onOpenPointsModal();
                 } else {
+                  setUsePoints(false);
                   setBonusPoints(0);
                 }
               }}
-              className={`w-[48px] h-[28px] rounded-full p-[3px] transition-colors duration-200 flex ${
-                usePoints ? 'justify-end' : 'justify-start'
-              }`}
-              style={{
-                backgroundColor: usePoints ? colorTheme : '#E5E7EB',
-              }}
-            >
-              <span className='w-[22px] h-[22px] bg-white rounded-full shadow-md transition-transform duration-200' />
-            </button>
-            Оплатить баллами
-          </span>
+            />
+            <span>Использовать баллы?</span>
+          </label>
           <div className='flex items-center gap-[8px]'>
             {maxUsablePoints} б.
             <Pencil
@@ -403,11 +389,7 @@ export const SumDetails: React.FC<{
               className='cursor-pointer'
               onClick={() => {
                 vibrateClick();
-                if (availablePoints <= 0) {
-                  onShowNoPoints();
-                } else {
-                  onOpenPointsModal();
-                }
+                onOpenPointsModal();
               }}
             />
           </div>

@@ -1,18 +1,21 @@
 .points-modal {
   @apply max-w-[92%] md:max-w-[420px] p-[20px] rounded-[12px] shadow-xl;
   position: fixed;
-  top: -100%;
   left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
   background: #fff;
-  z-index: 100;
-  transition: 0.5s;
+  z-index: 101;
+  transition: transform 0.25s ease, opacity 0.25s ease;
   display: flex;
   flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
 
   &.active {
-    top: 50%;
-    @apply translate-x-[-50%] translate-y-[-50%];
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
   }
 
   .title {

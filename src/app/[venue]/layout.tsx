@@ -6,12 +6,10 @@ import type { Metadata } from "next";
  * - Uses organization logo for icons/OpenGraph/Twitter
  * - Applies to all nested routes under /[venue]
  */
-export async function generateMetadata({
-  params,
-}: {
-  params: { venue: string };
-}): Promise<Metadata> {
-  const slug = params.venue;
+export async function generateMetadata(
+  props: { params: Promise<{ venue: string }> }
+): Promise<Metadata> {
+  const { venue: slug } = await props.params;
   let data:
     | {
         colorTheme?: string;

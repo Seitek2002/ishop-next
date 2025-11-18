@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -24,36 +24,42 @@ const Home = () => {
 
   const userData = loadUsersDataFromStorage();
   const [categoryTitle, setCategoryTitle] = useState<string>(t('allDishes'));
-  const clearCartHandler = () => {
-    setActive(!active);
-  };
+  const clearCartHandler = useCallback(() => {
+    setActive((v) => !v);
+  }, []);
 
-  const onSearchChange = (bool: boolean) => {
-    onSearch(bool);
-    document.body.style.overflow = bool ? 'hidden' : '';
-    window.scrollTo(0, 0);
-    if (!bool) {
-      setSelectedCategory(0);
-      setCategoryTitle(t('allDishes'));
-    }
-  };
+  const onSearchChange = useCallback(
+    (bool: boolean) => {
+      onSearch(bool);
+      document.body.style.overflow = bool ? 'hidden' : '';
+      window.scrollTo(0, 0);
+      if (!bool) {
+        setSelectedCategory(0);
+        setCategoryTitle(t('allDishes'));
+      }
+    },
+    [t]
+  );
 
-  const handleCategoryChange = (categoryId?: number) => {
+  const handleCategoryChange = useCallback((categoryId?: number) => {
     setSelectedCategory(categoryId);
     catalogRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
+
+  const onCategoryTitleChange = useCallback((title: string) => setCategoryTitle(title), []);
 
   useEffect(() => {
     localStorage.setItem('mainPage', location.pathname);
 
+    const data = loadUsersDataFromStorage();
     localStorage.setItem(
       'users',
       JSON.stringify({
-        ...userData,
+        ...data,
         activeSpot: +location.pathname.split('/').filter((item) => +item)[0],
       })
     );
-  }, [location.pathname, userData]);
+  }, [location.pathname]);
 
   useEffect(() => {
     const h = setTimeout(() => setDebouncedSearchText(searchText), 300);
@@ -71,7 +77,7 @@ const Home = () => {
             onCategoryChange={handleCategoryChange}
             onSearchChange={onSearchChange}
             selectedCategory={selectedCategory ?? 0}
-            onCategoryTitleChange={(title) => setCategoryTitle(title)}
+            onCategoryTitleChange={onCategoryTitleChange}
           />
           <div ref={catalogRef} className='md:pb-[100px]'>
             <Catalog

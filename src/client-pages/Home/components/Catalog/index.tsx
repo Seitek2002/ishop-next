@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, memo, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetProductsQuery } from 'api/Products.api';
@@ -184,4 +184,4 @@ const Catalog: FC<IProps> = ({
   );
 };
 
-export default Catalog;
+export default memo(Catalog);

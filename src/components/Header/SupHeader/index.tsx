@@ -2,8 +2,11 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import { loadUsersDataFromStorage } from 'src/utils/storageUtils';
 import { vibrateClick } from 'utils/haptics';
+import { useAppSelector } from 'hooks/useAppSelector';
+import { useAppDispatch } from 'hooks/useAppDispatch';
+import { setUsersData } from 'src/store/yourFeatureSlice';
+import PhoneModal from 'components/PhoneModal';
 
 const arrowIcon = '/assets/icons/Header/arrow.svg';
 const search = '/assets/icons/Header/search.svg';
@@ -29,6 +32,7 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
   const { i18n } = useTranslation();
   const { venue, id } = useParams();
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isPhoneModalOpen, setPhoneModalOpen] = useState(false);
 
   const activeLang = useMemo(
     () => LANGUAGE_MAP[i18n.language] || 'RU',
@@ -54,14 +58,9 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
     window.location.reload();
   };
 
-  const phoneForBonus = useMemo(() => {
-    try {
-      const u = loadUsersDataFromStorage();
-      return (u?.phoneNumber || '').trim();
-    } catch {
-      return '';
-    }
-  }, []);
+  const usersData = useAppSelector((s) => s.yourFeature.usersData);
+  const dispatch = useAppDispatch();
+  const phoneForBonus = (usersData?.phoneNumber || '').trim();
 
   const { data: bonusData } = useGetClientBonusQuery(
     { phone: phoneForBonus, organizationSlug: data?.slug || venue },
@@ -89,7 +88,14 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
           </label>
         )}
 
-        <div className='call' title='Баллы'>
+        <div
+          className='call'
+          title='Баллы'
+          onClick={() => {
+            vibrateClick();
+            setPhoneModalOpen(true);
+          }}
+        >
           <span className='text-[14px] font-bold text-center flex items-center gap-[8px]'>
             <Coins size={20} />
             <span className='mt-[4px]'>{bonusData?.bonus ?? 0} <span className='hidden md:inline'>б.</span></span>
@@ -122,6 +128,15 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
           </div>
         </div>
       </div>
+      <PhoneModal
+        open={isPhoneModalOpen}
+        defaultPhone={usersData?.phoneNumber ? (usersData.phoneNumber.startsWith('+') ? usersData.phoneNumber : `+${usersData.phoneNumber}`) : '+996'}
+        onClose={() => setPhoneModalOpen(false)}
+        onSubmit={(p) => {
+          const digits = (p || '').replace(/\D/g, '');
+          dispatch(setUsersData({ ...usersData, phoneNumber: digits }));
+        }}
+      />
     </div>
   );
 };

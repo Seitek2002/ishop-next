@@ -10,7 +10,6 @@ import FoodDetail from 'components/FoodDetail';
 
 import nothing from 'assets/images/not-found-products.png';
 
-
 import { t } from 'i18next';
 
 interface IProps {

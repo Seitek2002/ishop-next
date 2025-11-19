@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useGetProductsQuery } from 'api/Products.api';
@@ -8,7 +8,6 @@ import FoodDetail from '../../../../components/FoodDetail';
 import CatalogCard from 'components/Cards/Catalog';
 
 import nothing from 'assets/images/not-found-products.png';
-
 
 interface IProps {
   onSearchChange: (bool: boolean) => void;
@@ -20,8 +19,34 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
   const { venue } = useParams();
   const [isShow, setIsShow] = useState(false);
   const [activeFood, setActiveFood] = useState<IProduct | null>(null);
+
+  // Stock limit toast (top-right) for Home Search
+  const [showStockToast, setShowStockToast] = useState(false);
+  const [stockToastMsg, setStockToastMsg] = useState('');
+  const stockToastTimerRef = useRef<number | null>(null);
+  const showMaxStockToast = () => {
+    vibrateClick();
+    setStockToastMsg('Нельзя добавить больше — такого количества товара нет');
+    setShowStockToast(true);
+    try {
+      if (stockToastTimerRef.current) {
+        clearTimeout(stockToastTimerRef.current);
+      }
+    } catch {}
+    stockToastTimerRef.current = window.setTimeout(
+      () => setShowStockToast(false),
+      1800
+    );
+  };
+
   const effectiveSearch = (searchText || '').trim();
-  const { data: items, isLoading, isFetching, isUninitialized, isError } = useGetProductsQuery(
+  const {
+    data: items,
+    isLoading,
+    isFetching,
+    isUninitialized,
+    isError,
+  } = useGetProductsQuery(
     {
       category: undefined,
       search: effectiveSearch || undefined,
@@ -61,6 +86,14 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
     document.body.style.overflow = 'hidden';
   };
 
+  useEffect(() => {
+    return () => {
+      if (stockToastTimerRef.current) {
+        clearTimeout(stockToastTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className='search'>
       <FoodDetail
@@ -89,6 +122,27 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
           }
         }
       />
+      {showStockToast && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 12,
+            right: 12,
+            backgroundColor: '#333',
+            color: '#fff',
+            padding: '10px 12px',
+            borderRadius: 8,
+            zIndex: 10000,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            maxWidth: '80vw',
+            fontSize: 14,
+          }}
+          role="status"
+          aria-live="polite"
+        >
+          {stockToastMsg || 'Нельзя добавить больше — такого количества товара нет'}
+        </div>
+      )}
       <div className='search__content'>
         <div className='search__top'>
           <svg
@@ -164,8 +218,8 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
           </label>
         </div>
 
-        {searchText && (
-          loading ? (
+        {searchText &&
+          (loading ? (
             <div className='search__catalog'>
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className='bg-white rounded-[12px] p-[12px]'>
@@ -180,7 +234,16 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
               <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
                 Увы, ничего не найдено{'('}
               </h3>
-              <img src={typeof nothing === "string" ? nothing : (nothing as unknown as { src?: string })?.src || "/assets/images/not-found-products.png"} alt='' className='w-full' />
+              <img
+                src={
+                  typeof nothing === 'string'
+                    ? nothing
+                    : (nothing as unknown as { src?: string })?.src ||
+                      '/assets/images/not-found-products.png'
+                }
+                alt=''
+                className='w-full'
+              />
             </div>
           ) : sortedItems.length > 0 ? (
             <div className='search__catalog'>
@@ -189,6 +252,7 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
                   foodDetail={handleOpen}
                   key={item.id}
                   item={item}
+                  onMaxExceeded={showMaxStockToast}
                 />
               ))}
             </div>
@@ -197,10 +261,18 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
               <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
                 Увы, ничего не найдено{'('}
               </h3>
-              <img src={typeof nothing === "string" ? nothing : (nothing as unknown as { src?: string })?.src || "/assets/images/not-found-products.png"} alt='' className='w-full' />
+              <img
+                src={
+                  typeof nothing === 'string'
+                    ? nothing
+                    : (nothing as unknown as { src?: string })?.src ||
+                      '/assets/images/not-found-products.png'
+                }
+                alt=''
+                className='w-full'
+              />
             </div>
-          )
-        )}
+          ))}
       </div>
     </div>
   );

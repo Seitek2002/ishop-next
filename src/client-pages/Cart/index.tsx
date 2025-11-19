@@ -97,6 +97,24 @@ const Cart: React.FC = () => {
   const [clearCartModal, setClearCartModal] = useState(false);
   const [showWorkTimeModal, setShowWorkTimeModal] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  // Stock limit toast (top-right)
+  const [showStockToast, setShowStockToast] = useState(false);
+  const [stockToastMsg, setStockToastMsg] = useState('');
+  const stockToastTimerRef = useRef<number | null>(null);
+  const showMaxStockToast = () => {
+    vibrateClick();
+    setStockToastMsg('Нельзя добавить больше — такого количества товара нет');
+    setShowStockToast(true);
+    try {
+      if (stockToastTimerRef.current) {
+        clearTimeout(stockToastTimerRef.current);
+      }
+    } catch {}
+    stockToastTimerRef.current = window.setTimeout(
+      () => setShowStockToast(false),
+      1800
+    );
+  };
 
   const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
   const { data: bonusData } = useGetClientBonusQuery(
@@ -696,6 +714,14 @@ const Cart: React.FC = () => {
     setIsPointsModalOpen(true);
   };
 
+  useEffect(() => {
+    return () => {
+      if (stockToastTimerRef.current) {
+        clearTimeout(stockToastTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <>
       <section className='cart relative font-inter bg-[#F1F2F3] px-[16px] pt-[40px] lg:max-w-[1140px] lg:mx-auto'>
@@ -736,6 +762,27 @@ const Cart: React.FC = () => {
           onBack={() => navigate(-1)}
           onClear={() => setClearCartModal(true)}
         />
+        {showStockToast && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 12,
+              right: 12,
+              backgroundColor: '#333',
+              color: '#fff',
+              padding: '10px 12px',
+              borderRadius: 8,
+              zIndex: 10000,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+              maxWidth: '80vw',
+              fontSize: 14,
+            }}
+            role="status"
+            aria-live="polite"
+          >
+            {stockToastMsg || 'Нельзя добавить больше — такого количества товара нет'}
+          </div>
+        )}
 
         {window.innerWidth < 768 && (
           <>
@@ -747,7 +794,13 @@ const Cart: React.FC = () => {
             )}
             <div className='cart__items'>
               {cart.length > 0 ? (
-                cart.map((item) => <BusketCard key={item.id} item={item} />)
+                cart.map((item) => (
+                  <BusketCard
+                    key={item.id}
+                    item={item}
+                    onMaxExceeded={showMaxStockToast}
+                  />
+                ))
               ) : (
                 <div />
               )}

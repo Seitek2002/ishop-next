@@ -12,9 +12,10 @@ import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
 
 interface IProps {
   item: IFoodCart;
+  onMaxExceeded?: () => void;
 }
 
-const BusketCard: FC<IProps> = ({ item }) => {
+const BusketCard: FC<IProps> = ({ item, onMaxExceeded }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const dispatch = useAppDispatch();
   const colorTheme = useAppSelector(
@@ -31,6 +32,7 @@ const BusketCard: FC<IProps> = ({ item }) => {
       .reduce((sum, ci) => sum + ci.quantity, 0);
     const maxAvail = item.availableQuantity ?? Number.POSITIVE_INFINITY;
     if (currentTotal >= maxAvail) {
+      onMaxExceeded && onMaxExceeded();
       return;
     }
     dispatch(addToCart({ ...item, quantity: 1, availableQuantity: item.availableQuantity }));

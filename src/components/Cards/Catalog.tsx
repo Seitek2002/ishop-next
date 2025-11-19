@@ -12,9 +12,10 @@ import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
 interface IProps {
   item: IProduct;
   foodDetail?: (item: IProduct) => void;
+  onMaxExceeded?: () => void;
 }
 
-const CatalogCard: FC<IProps> = ({ item, foodDetail }) => {
+const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
   const dispatch = useAppDispatch();
 
   const srcCandidate = useMemo(
@@ -43,6 +44,7 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail }) => {
         .filter((ci) => String(ci.id).split(',')[0] === baseId)
         .reduce((sum, ci) => sum + ci.quantity, 0);
       if (item.quantity <= 0 || currentTotal >= item.quantity) {
+        onMaxExceeded && onMaxExceeded();
         // Out of stock or reached limit
         return;
       }

@@ -1,4 +1,4 @@
-import { FC, memo, useMemo, useState } from 'react';
+import { FC, memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useGetProductsQuery } from 'api/Products.api';
@@ -28,6 +28,25 @@ const Catalog: FC<IProps> = ({
   const { venue } = useParams();
   const [isShow, setIsShow] = useState(false);
   const [activeFood, setActiveFood] = useState<IProduct | null>(null);
+
+  // Stock limit toast (top-right) for Home Catalog
+  const [showStockToast, setShowStockToast] = useState(false);
+  const [stockToastMsg, setStockToastMsg] = useState('');
+  const stockToastTimerRef = useRef<number | null>(null);
+  const showMaxStockToast = () => {
+    vibrateClick();
+    setStockToastMsg('Нельзя добавить больше — такого количества товара нет');
+    setShowStockToast(true);
+    try {
+      if (stockToastTimerRef.current) {
+        clearTimeout(stockToastTimerRef.current);
+      }
+    } catch {}
+    stockToastTimerRef.current = window.setTimeout(
+      () => setShowStockToast(false),
+      1800
+    );
+  };
   const cart = useAppSelector((state) => state.yourFeature.cart);
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
@@ -109,6 +128,14 @@ const Catalog: FC<IProps> = ({
 
   const nothingSrc = typeof nothing === 'string' ? nothing : (nothing as unknown as { src?: string })?.src || '/assets/images/not-found-products.png';
 
+  useEffect(() => {
+    return () => {
+      if (stockToastTimerRef.current) {
+        clearTimeout(stockToastTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <section className='catalog'>
       <FoodDetail
@@ -138,6 +165,27 @@ const Catalog: FC<IProps> = ({
         }
       />
       <h2>{categoryTitle || t('allDishes')}</h2>
+      {showStockToast && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 12,
+            right: 12,
+            backgroundColor: '#333',
+            color: '#fff',
+            padding: '10px 12px',
+            borderRadius: 8,
+            zIndex: 10000,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            maxWidth: '80vw',
+            fontSize: 14,
+          }}
+          role="status"
+          aria-live="polite"
+        >
+          {stockToastMsg || 'Нельзя добавить больше — такого количества товара нет'}
+        </div>
+      )}
       {loading ? (
         <div className='catalog__content'>
           {Array.from({ length: 8 }).map((_, i) => (
@@ -152,7 +200,12 @@ const Catalog: FC<IProps> = ({
         <div className='catalog__content'>
           {filteredItems.map((item) => {
             return (
-              <CatalogCard foodDetail={handleOpen} key={item.id} item={item} />
+              <CatalogCard
+                foodDetail={handleOpen}
+                key={item.id}
+                item={item}
+                onMaxExceeded={showMaxStockToast}
+              />
             );
           })}
           {window.innerWidth < 768 && cart.length !== 0 && (

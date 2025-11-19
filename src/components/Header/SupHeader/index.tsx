@@ -98,7 +98,7 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
         >
           <span className='text-[14px] font-bold text-center flex items-center gap-[8px]'>
             <Coins size={20} />
-            <span className='mt-[4px]'>{bonusData?.bonus ?? 0} <span className='hidden md:inline'>б.</span></span>
+            <span className='mt-[4px]'>{bonusData?.balance ?? 0} <span className='hidden md:inline'>б.</span></span>
           </span>
         </div>
         <div className='language'>

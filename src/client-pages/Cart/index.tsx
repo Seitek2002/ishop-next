@@ -121,7 +121,7 @@ const Cart: React.FC = () => {
     { phone: phoneNumber, organizationSlug: venueData?.slug },
     { skip: !phoneNumber || !venueData?.slug }
   );
-  const availablePoints = Math.max(0, Math.floor(bonusData?.bonus ?? 0));
+  const availablePoints = Math.max(0, Math.floor(bonusData?.balance ?? 0));
   const [usePoints, setUsePoints] = useState(false);
   const [bonusPoints, setBonusPoints] = useState(0);
   const [otpCode, setOtpCode] = useState<string>('');

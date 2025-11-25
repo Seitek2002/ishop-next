@@ -31,6 +31,7 @@ import ClearCartModal from 'components/ClearCartModal';
 import FoodDetail from 'components/FoodDetail';
 import PointsModal from 'components/PointsModal';
 import WorkTimeModal from 'components/WorkTimeModal';
+import ServerErrorModal from 'components/ServerErrorModal';
 
 
 import { useMask } from '@react-input/mask';
@@ -96,7 +97,8 @@ const Cart: React.FC = () => {
   const [wrapperHeight, setWrapperHeight] = useState(0);
   const [clearCartModal, setClearCartModal] = useState(false);
   const [showWorkTimeModal, setShowWorkTimeModal] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverErrorModalOpen, setServerErrorModalOpen] = useState(false);
+  const [serverErrorData, setServerErrorData] = useState<unknown>(null);
   // Stock limit toast (top-right)
   const [showStockToast, setShowStockToast] = useState(false);
   const [stockToastMsg, setStockToastMsg] = useState('');
@@ -399,7 +401,8 @@ const Cart: React.FC = () => {
         const url = normalizePaymentUrl(res.paymentUrl);
         if (!url) {
           setIsLoading(false);
-          setServerError('Некорректная платежная ссылка');
+          setServerErrorData({ error: 'Некорректная платежная ссылка' });
+          setServerErrorModalOpen(true);
           return;
         }
         try {
@@ -418,7 +421,8 @@ const Cart: React.FC = () => {
           }
           return; // Do not continue in this handler
         } catch (e) {
-          setServerError('Не удалось перейти по платежной ссылке');
+          setServerErrorData({ error: 'Не удалось перейти по платежной ссылке', detail: e });
+          setServerErrorModalOpen(true);
           setIsLoading(false);
         }
       } else if (res?.phoneVerificationHash) {
@@ -433,10 +437,9 @@ const Cart: React.FC = () => {
         setIsLoading(false);
       }
     } catch (err: unknown) {
-      const msg = getErrorMessage(err);
       try {
-        setServerError(String(msg));
-        setTimeout(() => setServerError(null), 5000);
+        setServerErrorData(err);
+        setServerErrorModalOpen(true);
       } catch {
         /* ignore */
       }
@@ -586,8 +589,8 @@ const Cart: React.FC = () => {
       }
     } catch (err: unknown) {
       try {
-        setServerError(getErrorMessage(err));
-        setTimeout(() => setServerError(null), 5000);
+        setServerErrorData(err);
+        setServerErrorModalOpen(true);
       } catch {
         /* ignore */
       }
@@ -678,8 +681,8 @@ const Cart: React.FC = () => {
       }
     } catch (err: unknown) {
       try {
-        setServerError(getErrorMessage(err));
-        setTimeout(() => setServerError(null), 5000);
+        setServerErrorData(err);
+        setServerErrorModalOpen(true);
       } catch {
         /* ignore */
       }
@@ -754,6 +757,11 @@ const Cart: React.FC = () => {
         <NoPointsModal
           showNoPoints={showNoPoints}
           setShowNoPoints={setShowNoPoints}
+        />
+        <ServerErrorModal
+          isShow={serverErrorModalOpen}
+          onClose={() => setServerErrorModalOpen(false)}
+          error={serverErrorData}
         />
         {isLoading && <CartLoader />}
 
@@ -982,27 +990,6 @@ const Cart: React.FC = () => {
             setIsPointsModalOpen(false);
           }}
         />
-        {serverError && (
-          <div
-            style={{
-              position: 'fixed',
-              bottom: '16px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              backgroundColor: '#ff4d4f',
-              color: '#fff',
-              padding: '12px 16px',
-              borderRadius: '8px',
-              zIndex: 9999,
-              maxWidth: '90%',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              textAlign: 'center',
-            }}
-            role="alert"
-          >
-            {serverError}
-          </div>
-        )}
       </section>
     </>
   );

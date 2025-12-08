@@ -1,3 +1,5 @@
+'use client';
+
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import QRCode from 'react-qr-code';
@@ -13,7 +15,6 @@ import { statusMessages } from './enums';
 
 const headerArrowIcon = '/assets/icons/Busket/header-arrow.svg';
 const priceArrow = '/assets/icons/Busket/price-arrow.svg';
-
 
 // function formatCreatedAt(dateString: string) {
 //   const date = new Date(dateString);
@@ -208,7 +209,9 @@ const Order = () => {
                 </span>
               )}
               {data?.serviceMode == 2 && (
-                <span style={{ color: colorTheme }}>{t('orders.takeAway')}</span>
+                <span style={{ color: colorTheme }}>
+                  {t('orders.takeAway')}
+                </span>
               )}
               {data?.serviceMode == 3 && (
                 <span style={{ color: colorTheme }}>{t('empty.delivery')}</span>

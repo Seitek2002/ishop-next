@@ -197,7 +197,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
       ></div>
       <div
         className={`${isShow ? 'active' : ''} food-detail`}
-        style={{ backgroundColor: '#fff' }}
+        style={{ backgroundColor: '#fff' }} {...bind()}
       >
         <img
           src={close}
@@ -206,7 +206,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
           onClick={handleImageClick}
         />
         <div className='food-detail__wrapper'>
-          <div {...bind()} className='img-wrapper'>
+          <div className='img-wrapper'>
             {!isLoaded && (
               <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
             )}

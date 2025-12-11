@@ -1,4 +1,5 @@
 import { FC, useMemo, useState } from 'react';
+import Image from 'next/image';
 
 import { IProduct } from 'types/products.types';
 import { useAppDispatch } from 'hooks/useAppDispatch';
@@ -77,17 +78,19 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
 
   return (
     <div className='cart-block bg-white'>
-      <div className='cart-img'>
+      <div className='cart-img relative'>
         {!isLoaded && (
           <div className='cart-img-skeleton absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse'></div>
         )}
-        <img
+        <Image
           src={srcCandidate}
           alt={item.productName || 'product'}
+          width={300}
+          height={200}
           onLoad={() => setIsLoaded(true)}
           onError={(e) => {
             if (e.currentTarget.src !== defaultProduct) {
-              e.currentTarget.src = defaultProduct;
+              e.currentTarget.src = defaultProduct as unknown as string;
               setIsLoaded(true);
             }
           }}

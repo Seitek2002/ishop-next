@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { IModificator, IProduct } from 'types/products.types';
@@ -13,7 +13,7 @@ const whiteMinus = '/assets/icons/CatalogCard/white-minus.svg';
 const whitePlus = '/assets/icons/CatalogCard/white-plus.svg';
 
 
-import { useGesture } from '@use-gesture/react';
+
 import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
 
 interface IProps {
@@ -33,6 +33,40 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   const sizes: IModificator[] = item.modificators || [];
   const [selectedSize, setSelectedSize] = useState<IModificator | null>(null);
   const dispatch = useAppDispatch();
+  const startY = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const prev = document.body.style.overflow;
+    if (isShow) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = prev || '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isShow]);
+
+  useEffect(() => {
+    if (!isShow) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsShow();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isShow, setIsShow]);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    startY.current = e.touches?.[0]?.clientY ?? null;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (startY.current == null) return;
+    const endY = e.changedTouches?.[0]?.clientY ?? 0;
+    const delta = endY - startY.current;
+    if (delta > 100) setIsShow();
+    startY.current = null;
+  };
 
 
   const handleCounterChange = useCallback((delta: number) => {
@@ -81,13 +115,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
     []
   );
 
-  const bind = useGesture({
-    onDrag: ({ movement: [, y], down }) => {
-      if (!down && y > 100) {
-        setIsShow();
-      }
-    },
-  });
+
 
   const handleImageClick = () => {
     vibrateClick();
@@ -197,7 +225,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
       ></div>
       <div
         className={`${isShow ? 'active' : ''} food-detail`}
-        style={{ backgroundColor: '#fff' }} {...bind()}
+        style={{ backgroundColor: '#fff' }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}
       >
         <img
           src={close}

@@ -15,7 +15,7 @@ export const ordersApi = baseApi.injectEndpoints({
       {
         // New schema fields
         organizationSlug?: string;
-        spotId?: string | number;
+        spotId: string | number;
         phone?: string;
         // Backward compatibility with older code paths:
         venueSlug?: string;

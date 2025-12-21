@@ -15,17 +15,18 @@ import offer1 from 'assets/images/OrderStatus/Offer-1.png';
 import offer2 from 'assets/images/OrderStatus/Offer-2.png';
 import offer3 from 'assets/images/OrderStatus/schedule-status.png';
 
-
-
 const Hero = () => {
   const user = JSON.parse(localStorage.getItem('users') ?? '{}');
   const venue = JSON.parse(localStorage.getItem('venue') ?? '{}');
   const navigate = useNavigate();
 
+  const defaultSpotId =
+    venue?.defaultDeliverySpot ?? venue?.spots?.[0]?.id ?? 0;
 
   const { data: fetchedOrders } = useGetOrdersQuery({
     phone: `${user.phoneNumber}`,
     organizationSlug: venue.slug,
+    spotId: defaultSpotId,
   });
 
   const [orders, setOrders] = useState<IOrder[] | undefined>([]);
@@ -55,6 +56,7 @@ const Hero = () => {
   };
 
   useEffect(() => {
+    console.log(fetchedOrders);
     if (fetchedOrders) {
       setOrders(fetchedOrders);
     }
@@ -94,56 +96,57 @@ const Hero = () => {
   };
 
   return (
-    !!(orders?.length) && (<section className='hero'>
-      <Swiper
-        pagination={{ dynamicBullets: true }}
-        modules={[Pagination]}
-        className='hero-swiper'
-      >
-        {isOutsideWorkTime(venue.schedule || '00:00-00:00') && (
-          <SwiperSlide>
-            <div
-              className='hero__item'
-              style={{
-                backgroundImage: `url(${offer3})`,
-              }}
-            >
-              <p
-                className={`text-base md:text-[32px] max-w-[60%] font-bold text-[#a9a9a9]`}
-              >
-                Сейчас нерабочее время
-              </p>
-            </div>
-          </SwiperSlide>
-        )}
-
-        {orders?.map((order) => {
-          const { color } = getStatusData(order.serviceMode, order.status);
-
-          return (
-            <SwiperSlide key={`order-${order.id}`}>
+    !!orders?.length && (
+      <section className='hero'>
+        <Swiper
+          pagination={{ dynamicBullets: true }}
+          modules={[Pagination]}
+          className='hero-swiper'
+        >
+          {isOutsideWorkTime(venue.schedule || '00:00-00:00') && (
+            <SwiperSlide>
               <div
-                onClick={() => handleOrderClick(order.id)}
                 className='hero__item'
                 style={{
-                  backgroundImage: `url(${
-                    order.status === 0 ? offer1 : offer2
-                  })`,
+                  backgroundImage: `url(${offer3})`,
                 }}
               >
-                <span>Заказ №{order.id}</span>
                 <p
-                  className={`text-base md:text-[32px] max-w-[60%] font-bold ${color}`}
+                  className={`text-base md:text-[32px] max-w-[60%] font-bold text-[#a9a9a9]`}
                 >
-                  {order.statusText}
+                  Сейчас нерабочее время
                 </p>
               </div>
             </SwiperSlide>
-          );
-        })}
+          )}
 
-      </Swiper>
-    </section>)
+          {orders?.map((order) => {
+            const { color } = getStatusData(order.serviceMode, order.status);
+
+            return (
+              <SwiperSlide key={`order-${order.id}`}>
+                <div
+                  onClick={() => handleOrderClick(order.id)}
+                  className='hero__item'
+                  style={{
+                    backgroundImage: `url(${
+                      order.status === 0 ? offer1 : offer2
+                    })`,
+                  }}
+                >
+                  <span>Заказ №{order.id}</span>
+                  <p
+                    className={`text-base md:text-[32px] max-w-[60%] font-bold ${color}`}
+                  >
+                    {order.statusText}
+                  </p>
+                </div>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </section>
+    )
   );
 };
 

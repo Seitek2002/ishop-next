@@ -1,41 +1,36 @@
 {
-  "name": "ishop-next",
-  "version": "0.1.0",
+  "name": "enterprise-nextjs-app",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint.",
+    "upgrade": "next upgrade"
   },
   "dependencies": {
-    "@react-input/mask": "^2.0.4",
-    "@reduxjs/toolkit": "^2.9.0",
-
-    "@yudiel/react-qr-scanner": "^2.3.1",
-    "i18next": "^25.6.0",
+    "@react-input/mask": "^2.1.1",
+    "@reduxjs/toolkit": "^2.11.2",
+    "i18next": "^25.8.3",
     "i18next-browser-languagedetector": "^8.2.0",
-    "i18next-http-backend": "^3.0.2",
-    "lucide-react": "^0.545.0",
-    "next": "15.5.5",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-i18next": "^16.0.1",
-    "react-input-mask": "^2.0.4",
+    "i18next-http-backend": "^3.0.0",
+    "lucide-react": "^0.563.0",
+    "next": "16.1.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-i18next": "^16.5.4",
     "react-qr-code": "^2.0.18",
     "react-redux": "^9.2.0",
-    "swiper": "^12.0.2"
+    "swiper": "^12.1.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.5",
-    "sass": "^1.93.2",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "16.1.6",
+    "sass": "^1.97.3",
+    "typescript": "^5.9.3"
   }
 }

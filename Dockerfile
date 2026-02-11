@@ -18,10 +18,8 @@ RUN \
   else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
   fi
 
-COPY src ./src
-COPY public ./public
-COPY next.config.ts .
-COPY tsconfig.json .
+# 2. Копируем ВЕСЬ проект
+COPY . .
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
@@ -76,5 +74,6 @@ ENV NEXT_PUBLIC_ENV_VARIABLE=${NEXT_PUBLIC_ENV_VARIABLE}
 # Note: Don't expose ports here, Compose will handle that for us
 
 CMD ["node", "server.js"]
+
 
 

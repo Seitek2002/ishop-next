@@ -37,4 +37,6 @@ export interface IVenues {
   isDeliveryAvailable: boolean;
   isTakeoutAvailable: boolean;
   isDineinAvailable: boolean;
+  // TODO: добавить на бэке — номер WhatsApp конкретного заведения
+  phone?: string | null;
 }

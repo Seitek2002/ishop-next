@@ -13,10 +13,8 @@ import WeeklyScheduleModal from 'components/WeeklyScheduleModal';
 import { Calendar, Clock, MessageCircle } from 'lucide-react';
 import { clearCart, setVenue } from 'src/store/yourFeatureSlice';
 
-const WHATSAPP_FALLBACK = '996700000000'; // заглушка пока бэк не вернёт номер заведения
-
 const getWhatsappUrl = (phone?: string | null) => {
-  const number = (phone || WHATSAPP_FALLBACK).replace(/\D/g, '');
+  const number = (phone || '').replace(/\D/g, '');
   return `https://wa.me/${number}?text=${encodeURIComponent('Здравствуйте! Хочу получить консультацию по товарам.')}`;
 };
 
@@ -72,17 +70,19 @@ const SubHeader = () => {
             <Clock size={14} />
             <span>24–48 ч</span>
           </div>
-          <a
-            href={getWhatsappUrl(data?.phone)}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='whatsapp-btn'
-            aria-label='Консультация в WhatsApp'
-            onClick={() => vibrateClick()}
-          >
-            <MessageCircle size={16} />
-            <span>Консультация</span>
-          </a>
+          {data?.phoneNumber && (
+            <a
+              href={getWhatsappUrl(data.phoneNumber)}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='whatsapp-btn'
+              aria-label='Консультация в WhatsApp'
+              onClick={() => vibrateClick()}
+            >
+              <MessageCircle size={16} />
+              <span>Консультация</span>
+            </a>
+          )}
           <div
             className='call cursor-pointer'
             role='button'

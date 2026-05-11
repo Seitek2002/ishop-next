@@ -251,6 +251,21 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
           <div className='food-detail__content'>
             <div className='description'>
               <h2>{item?.productName}</h2>
+              <div className='flex items-center gap-[8px] mt-[4px] mb-[6px]'>
+                {typeof item?.productPrice !== 'undefined' && (
+                  <span
+                    className='font-semibold text-[16px]'
+                    style={{ color: colorTheme }}
+                  >
+                    {+item.productPrice} с
+                  </span>
+                )}
+                {item?.weight && item?.measureUnit ? (
+                  <span className='text-[14px] text-[#727272]'>
+                    · {item.weight} {item.measureUnit}
+                  </span>
+                ) : null}
+              </div>
               <div className='product-description'>{descriptionNodes}</div>
             </div>
             {sizes.length !== 0 && (

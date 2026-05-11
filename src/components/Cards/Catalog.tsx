@@ -181,6 +181,11 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
         </div>
       )}
       <h4 className='cart-name'>{item.productName}</h4>
+      {item.weight && item.measureUnit ? (
+        <span className='cart-weight text-[12px] text-[#727272]'>
+          {item.weight} {item.measureUnit}
+        </span>
+      ) : null}
     </div>
   );
 };

@@ -9,6 +9,8 @@ export interface IFoodCart {
   productDescription: string | null;
   productPrice: number;
   weight: number;
+  // TODO: добавить на бэке — единица измерения веса/объёма ("мл", "гр" и т.п.)
+  measureUnit?: string | null;
   productPhoto: string;
   category: ICategory;
   quantity: number;
@@ -28,6 +30,8 @@ export interface IProduct {
   productDescription: string | null;
   productPrice: number;
   weight: number;
+  // TODO: добавить на бэке — единица измерения веса/объёма ("мл", "гр" и т.п.)
+  measureUnit?: string | null;
   productPhoto: string;
   productPhotoSmall: string;
   productPhotoLarge: string;

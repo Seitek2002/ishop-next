@@ -1,21 +1,42 @@
 .categories {
-  @apply overflow-x-auto overflow-y-hidden sticky top-0 z-[1] bg-[#F1F2F3] relative;
-  @apply md:overflow-visible md:flex md:gap-[20px] md:py-0;
+  @apply sticky top-0 z-[1] bg-[#F1F2F3] relative;
 
-  .dropdown-arrow {
-    @apply absolute right-[10px] cursor-pointer text-[12px] left-[50%] bottom-[-20px] translate-x-[-50%] bg-[#a9a9a9] text-[white] rounded w-max px-[15px];
+  &::after {
+    content: '';
+    @apply pointer-events-none absolute top-0 right-0 bottom-0 w-[28px] z-[2] md:w-[40px];
+    background: linear-gradient(to right, rgba(241, 242, 243, 0), #F1F2F3);
   }
 
-  &__content {
-    @apply flex items-center gap-[15px] pt-[15px] pb-[40px] md:flex-wrap md:gap-[30px] md:h-[107px] md:overflow-hidden;
+  &__nav {
+    @apply hidden md:flex absolute top-[35px] z-[3] items-center justify-center w-[32px] h-[32px] rounded-full bg-white shadow-md border border-[#e5e7eb] text-[#374151] opacity-0 pointer-events-none transition-opacity;
 
-    &.active {
-      @apply md:h-auto;
+    &.visible {
+      @apply opacity-100 pointer-events-auto;
+    }
+
+    &:hover {
+      @apply bg-[#f9fafb];
+    }
+
+    &--left {
+      @apply left-[4px];
+    }
+
+    &--right {
+      @apply right-[4px];
     }
   }
 
+  .dropdown-arrow {
+    @apply absolute right-[10px] cursor-pointer text-[12px] left-[50%] bottom-[-20px] translate-x-[-50%] bg-[#a9a9a9] text-[white] rounded w-max px-[15px] z-[3];
+  }
+
+  &__content {
+    @apply flex items-start gap-[8px] pt-[15px] pb-[40px] overflow-x-auto overflow-y-hidden md:gap-[16px];
+  }
+
   &__item {
-    @apply text-center w-[63px] h-[63px] box-border cursor-pointer;
+    @apply text-center w-[84px] box-border cursor-pointer shrink-0;
     // @apply md:w-[115px] md:h-[44px] md:flex md:justify-center md:gap-[10px] md:items-center md:rounded-full md:bg-white;
 
     &.active {
@@ -46,15 +67,17 @@
   }
 
   span {
-    @apply mt-[8px] font-medium text-[12px] text-center block;
+    @apply mt-[8px] font-medium text-[12px] text-center block leading-tight;
+    overflow-wrap: break-word;
+    hyphens: auto;
     // @apply md:mt-0 md:text-[10px];
   }
 }
 
-.categories {
+.categories__content {
   scrollbar-width: none; /* Для Firefox */
 }
 
-.categories::-webkit-scrollbar {
+.categories__content::-webkit-scrollbar {
   display: none; /* Для Chrome, Safari и других Webkit-браузеров */
 }

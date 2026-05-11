@@ -73,7 +73,7 @@ const Home = () => {
       <ClearCartModal isShow={active} setActive={setActive} />
       <Header searchText={searchText} setSearchText={setSearchText} />
       <div className='flex gap-[30px] items-start pb-[50px] w-full'>
-        <div className='w-full md:w-[58%]'>
+        <div className='w-full md:w-[58%] min-w-0'>
           <Hero />
           <Categories
             onCategoryChange={handleCategoryChange}

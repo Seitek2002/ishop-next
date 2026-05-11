@@ -8,7 +8,7 @@ const headerArrowIcon = '/assets/icons/Busket/header-arrow.svg';
 const priceArrow = '/assets/icons/Busket/price-arrow.svg';
 const deliveryIcon = '/assets/icons/Order/delivery.svg';
 
-import { Pencil } from 'lucide-react';
+import { Clock, Pencil } from 'lucide-react';
 
 type TFunc = (k: string, opts?: Record<string, unknown>) => string;
 
@@ -239,7 +239,7 @@ export const DeliveryInfoBanner: React.FC<{
   colorTheme?: string;
   t: TFunc;
 }> = ({ isDelivery, deliveryFreeFrom, subtotal, colorTheme, t }) => {
-  if (!isDelivery || deliveryFreeFrom === null) return null;
+  if (!isDelivery) return null;
 
   return (
     <div
@@ -249,24 +249,32 @@ export const DeliveryInfoBanner: React.FC<{
       <div className='cart__delivery-icon' style={{ borderColor: colorTheme }}>
         <img src={deliveryIcon} alt='delivery' />
       </div>
-      <div className='cart__delivery-text'>
-        {subtotal >= deliveryFreeFrom ? (
-          <span>
-            {t('freeDeliveryYouGet')}{' '}
-            <span style={{ color: colorTheme, fontWeight: 600 }}>
-              {t('freeDelivery')}
+      <div className='cart__delivery-text flex items-center justify-between gap-2 flex-1'>
+        <div>
+          {deliveryFreeFrom === null ? (
+            <span>{t('delivery')}</span>
+          ) : subtotal >= deliveryFreeFrom ? (
+            <span>
+              {t('freeDeliveryYouGet')}{' '}
+              <span style={{ color: colorTheme, fontWeight: 600 }}>
+                {t('freeDelivery')}
+              </span>
             </span>
-          </span>
-        ) : (
-          <span>
-            {t('freeDeliveryAdd', {
-              amount: Math.max(0, Math.ceil(deliveryFreeFrom - subtotal)),
-            })}{' '}
-            <span style={{ color: colorTheme, fontWeight: 600 }}>
-              бесплатной доставки
+          ) : (
+            <span>
+              {t('freeDeliveryAdd', {
+                amount: Math.max(0, Math.ceil(deliveryFreeFrom - subtotal)),
+              })}{' '}
+              <span style={{ color: colorTheme, fontWeight: 600 }}>
+                бесплатной доставки
+              </span>
             </span>
-          </span>
-        )}
+          )}
+        </div>
+        <div className='cart__delivery-time flex items-center gap-[4px] text-[11px] font-medium text-[#626576] bg-[#F9F9F9] px-[8px] py-[6px] rounded-[8px] whitespace-nowrap shrink-0'>
+          <Clock size={14} />
+          <span>24–48 ч</span>
+        </div>
       </div>
     </div>
   );

@@ -1,14 +1,14 @@
 .sub-header {
     &__content {
-        @apply flex items-center justify-between;
+        @apply flex items-center justify-between gap-2 min-w-0;
     }
 
     .venue {
-        @apply flex items-center gap-2;
+        @apply flex items-center gap-2 min-w-0 flex-1;
     }
 
     .logo {
-        @apply size-[44px] rounded-full overflow-hidden;
+        @apply size-[44px] rounded-full overflow-hidden shrink-0;
 
         img {
             @apply h-full object-cover;
@@ -16,7 +16,7 @@
     }
 
     .name {
-        @apply font-bold text-[16px] max-w-[180px] md:max-w-[260px] truncate;
+        @apply font-bold text-[16px] truncate;
     }
 
     .schedule {
@@ -32,19 +32,11 @@
         @apply bg-[#F9F9F9] p-[8px] h-full rounded-[8px] flex items-center gap-[4px] text-[12px] ml-[4px];
     }
 
-    .delivery-time {
-        @apply flex items-center gap-[4px] text-[11px] font-medium text-[#626576] bg-[#F9F9F9] px-[8px] py-[6px] rounded-[8px] whitespace-nowrap;
-    }
-
     .whatsapp-btn {
-        @apply flex items-center gap-[4px] text-[11px] font-semibold text-white bg-[#25D366] px-[8px] py-[6px] rounded-[8px] whitespace-nowrap no-underline transition-opacity;
+        @apply flex items-center justify-center text-white bg-[#25D366] p-[8px] rounded-[8px] no-underline transition-opacity;
 
         &:hover {
             @apply opacity-80;
-        }
-
-        @media (max-width: 360px) {
-            span { @apply hidden; }
         }
     }
 }

@@ -252,7 +252,7 @@ export const DeliveryInfoBanner: React.FC<{
       <div className='cart__delivery-text flex items-center justify-between gap-2 flex-1'>
         <div>
           {deliveryFreeFrom === null ? (
-            <span>{t('delivery')}</span>
+            <span>{t('deliveryFee')}</span>
           ) : subtotal >= deliveryFreeFrom ? (
             <span>
               {t('freeDeliveryYouGet')}{' '}

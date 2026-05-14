@@ -377,16 +377,14 @@ const Order = () => {
         </div>
       </div>
 
-      {window.innerWidth < 768 && (
-        <footer className='order__footer'>
-          <button
-            style={{ backgroundColor: colorTheme }}
-            onClick={handleNavigate}
-          >
-            {t('main')}
-          </button>
-        </footer>
-      )}
+      <footer className='order__footer md:hidden'>
+        <button
+          style={{ backgroundColor: colorTheme }}
+          onClick={handleNavigate}
+        >
+          {t('main')}
+        </button>
+      </footer>
     </div>
   );
 };

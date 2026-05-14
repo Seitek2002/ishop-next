@@ -27,35 +27,32 @@ const Adaptivement: FC<IProps> = ({
 
   return (
     <>
-      {window.innerWidth < 768 ? (
-        <>
-          {search && (
-            <Search
-              onSearchChange={onSearchChange}
-              searchText={searchText}
-              setSearchText={setSearchText}
-            />
-          )}
-        </>
-      ) : (
-        <div className='flex-1 sticky z-10'>
-          <div className='busket'>
-            <header className='busket__header'>
-              <h2>{t('basket.title')}</h2>
-              <img
-                onClick={() => {
-                  vibrateClick();
-                  clearCartHandler();
-                }}
-                src={clearCartIcon}
-                alt=''
-                className='cursor-pointer'
-              />
-            </header>
-            <BusketDesktop to='/cart' />
-          </div>
+      {search && (
+        <div className='md:hidden'>
+          <Search
+            onSearchChange={onSearchChange}
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
         </div>
       )}
+      <div className='hidden md:block flex-1 sticky z-10'>
+        <div className='busket'>
+          <header className='busket__header'>
+            <h2>{t('basket.title')}</h2>
+            <img
+              onClick={() => {
+                vibrateClick();
+                clearCartHandler();
+              }}
+              src={clearCartIcon}
+              alt=''
+              className='cursor-pointer'
+            />
+          </header>
+          <BusketDesktop to='/cart' />
+        </div>
+      </div>
     </>
   );
 };

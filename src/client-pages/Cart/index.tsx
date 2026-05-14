@@ -794,29 +794,27 @@ const Cart: React.FC = () => {
           </div>
         )}
 
-        {window.innerWidth < 768 && (
-          <>
-            {venueData?.table?.tableNum && (
-              <div className='cart__top'>
-                {t('table')}
-                {venueData.table.tableNum}
-              </div>
-            )}
-            <div className='cart__items'>
-              {cart.length > 0 ? (
-                cart.map((item) => (
-                  <BusketCard
-                    key={item.id}
-                    item={item}
-                    onMaxExceeded={showMaxStockToast}
-                  />
-                ))
-              ) : (
-                <div />
-              )}
+        <div className='md:hidden'>
+          {venueData?.table?.tableNum && (
+            <div className='cart__top'>
+              {t('table')}
+              {venueData.table.tableNum}
             </div>
-          </>
-        )}
+          )}
+          <div className='cart__items'>
+            {cart.length > 0 ? (
+              cart.map((item) => (
+                <BusketCard
+                  key={item.id}
+                  item={item}
+                  onMaxExceeded={showMaxStockToast}
+                />
+              ))
+            ) : (
+              <div />
+            )}
+          </div>
+        </div>
 
         <div className='md:flex gap-[24px]'>
           <div className='md:w-[50%]'>
@@ -928,15 +926,13 @@ const Cart: React.FC = () => {
             )}
           </div>
 
-          {window.innerWidth >= 768 && (
-            <div className='busket flex-1'>
-              <BusketDesktop
-                to='/order'
-                createOrder={handleOrder}
-                disabled={!cart.length}
-              />
-            </div>
-          )}
+          <div className='busket flex-1 hidden md:block'>
+            <BusketDesktop
+              to='/order'
+              createOrder={handleOrder}
+              disabled={!cart.length}
+            />
+          </div>
         </div>
 
         <Recommended
@@ -951,13 +947,13 @@ const Cart: React.FC = () => {
           )}
         />
 
-        {window.innerWidth < 768 && (
+        <div className='md:hidden'>
           <FooterBar
             disabled={!cart.length}
             colorTheme={colorTheme}
             onPay={handleOrder}
           />
-        )}
+        </div>
         <PointsModal
           isShow={isPointsModalOpen}
           max={maxUsablePoints}

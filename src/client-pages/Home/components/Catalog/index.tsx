@@ -208,8 +208,8 @@ const Catalog: FC<IProps> = ({
               />
             );
           })}
-          {window.innerWidth < 768 && cart.length !== 0 && (
-            <div className='catalog__footer'>
+          {cart.length !== 0 && (
+            <div className='catalog__footer md:hidden'>
               <button
                 onClick={() => {
                   vibrateClick();

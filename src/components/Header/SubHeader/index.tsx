@@ -52,6 +52,12 @@ const SubHeader = () => {
   }, [venue, dispatch]);
 
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+  const [showFabLabel, setShowFabLabel] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowFabLabel(false), 4000);
+    return () => clearTimeout(t);
+  }, []);
 
   // const scheduleDisplay = useMemo(() => {
   //   const info = getTodayScheduleInfo(
@@ -79,18 +85,6 @@ const SubHeader = () => {
           </div>
         </div>
         <div className='flex items-center gap-[8px] shrink-0'>
-          {data?.phoneNumber && (
-            <a
-              href={getWhatsappUrl(data.phoneNumber)}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='whatsapp-btn'
-              aria-label='Консультация в WhatsApp'
-              onClick={() => vibrateClick()}
-            >
-              <WhatsappIcon size={18} />
-            </a>
-          )}
           <div
             className='call cursor-pointer'
             role='button'
@@ -107,6 +101,20 @@ const SubHeader = () => {
           )}
         </div>
       </div>
+
+      {data?.phoneNumber && (
+        <a
+          href={getWhatsappUrl(data.phoneNumber)}
+          target='_blank'
+          rel='noopener noreferrer'
+          className={`whatsapp-fab${showFabLabel ? ' whatsapp-fab--expanded' : ''}`}
+          aria-label='Консультация в WhatsApp'
+          onClick={() => vibrateClick()}
+        >
+          <WhatsappIcon size={28} />
+          <span className='whatsapp-fab__label'>Консультация</span>
+        </a>
+      )}
 
       <WeeklyScheduleModal
         isShow={isScheduleOpen}

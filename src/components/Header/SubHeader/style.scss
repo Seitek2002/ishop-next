@@ -32,11 +32,35 @@
         @apply bg-[#F9F9F9] p-[8px] h-full rounded-[8px] flex items-center gap-[4px] text-[12px] ml-[4px];
     }
 
-    .whatsapp-btn {
-        @apply flex items-center justify-center text-white bg-[#25D366] p-[8px] rounded-[8px] no-underline transition-opacity;
+    .whatsapp-fab {
+        @apply fixed z-50 flex items-center justify-center text-white bg-[#25D366] no-underline;
+        @apply h-[56px] min-w-[56px] rounded-full shadow-lg overflow-hidden;
+        @apply right-[16px] bottom-[100px] md:right-[24px] md:bottom-[24px];
+        @apply transition-all duration-300 ease-out;
+        padding: 0 14px;
+
+        &__label {
+            @apply font-medium text-[14px] whitespace-nowrap;
+            max-width: 0;
+            opacity: 0;
+            margin-left: 0;
+            transition: max-width 300ms ease-out, opacity 200ms ease-out, margin-left 300ms ease-out;
+        }
+
+        &--expanded {
+            .whatsapp-fab__label {
+                max-width: 180px;
+                opacity: 1;
+                margin-left: 8px;
+            }
+        }
 
         &:hover {
-            @apply opacity-80;
+            @apply scale-105;
+        }
+
+        &:active {
+            @apply scale-95;
         }
     }
 }

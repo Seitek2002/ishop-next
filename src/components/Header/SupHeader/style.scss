@@ -9,6 +9,33 @@
     span {
       @apply font-baloo text-base font-bold;
     }
+
+    &--venue {
+      @apply min-w-0 gap-3;
+
+      img {
+        @apply w-11 h-11 rounded-full object-cover shrink-0;
+      }
+
+      .logo__text {
+        @apply flex flex-col min-w-0;
+        line-height: 1.05;
+      }
+
+      .logo__name {
+        @apply font-baloo font-bold truncate text-[#0F1115];
+        font-size: 20px;
+        letter-spacing: -0.01em;
+      }
+
+      .logo__powered {
+        @apply font-medium text-gray-400 mt-[2px] truncate;
+        font-size: 9px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+    }
   }
 
   .language {

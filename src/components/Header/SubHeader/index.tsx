@@ -71,19 +71,23 @@ const SubHeader = () => {
   return (
     <div className='sub-header'>
       <div className='sub-header__content'>
-        <div className='venue'>
-          <div className='logo'>
-            <img src={data?.logo || undefined} alt='' />
-          </div>
-          <div className='min-w-0 flex-1'>
-            <div className='name' title={data?.companyName}>
-              {data?.companyName}
+        {venue === 'heyyou' ? (
+          <div className='venue venue--placeholder' />
+        ) : (
+          <div className='venue'>
+            <div className='logo'>
+              <img src={data?.logo || undefined} alt='' />
             </div>
-            {/* <span className='schedule' title={scheduleDisplay}>
-              {scheduleDisplay}
-            </span> */}
+            <div className='min-w-0 flex-1'>
+              <div className='name' title={data?.companyName}>
+                {data?.companyName}
+              </div>
+              {/* <span className='schedule' title={scheduleDisplay}>
+                {scheduleDisplay}
+              </span> */}
+            </div>
           </div>
-        </div>
+        )}
         <div className='flex items-center gap-[8px] shrink-0'>
           <div
             className='call cursor-pointer'

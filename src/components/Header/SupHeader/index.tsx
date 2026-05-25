@@ -72,10 +72,22 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
   return (
     <div className='header'>
       <div className='header__content'>
-        <div className='logo'>
-          <img src={logoIcon} width={30} alt='iMenu Logo' />
-          <span>ishop.kg</span>
-        </div>
+        {venue === 'heyyou' && (data?.logo || data?.companyName) ? (
+          <div className='logo logo--venue'>
+            {data?.logo && (
+              <img src={data.logo} alt={data?.companyName || ''} />
+            )}
+            <div className='logo__text'>
+              <span className='logo__name'>{data?.companyName}</span>
+              <span className='logo__powered'>Powered by iShop.kg</span>
+            </div>
+          </div>
+        ) : (
+          <div className='logo'>
+            <img src={logoIcon} width={30} alt='iMenu Logo' />
+            <span>ishop.kg</span>
+          </div>
+        )}
 
         {setSearchText && (
           <label htmlFor='search' className='header__search bg-[#F9F9F9]'>

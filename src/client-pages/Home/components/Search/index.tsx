@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useGetProductsQuery } from 'api/Products.api';
@@ -40,12 +40,14 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
   };
 
   const effectiveSearch = (searchText || '').trim();
+  // Artikul (article) = product id. When the query is purely numeric, also
+  // match it against product ids client-side (the backend search is name-only).
+  const isNumericSearch = /^\d+$/.test(effectiveSearch);
   const {
     data: items,
     isLoading,
     isFetching,
     isUninitialized,
-    isError,
   } = useGetProductsQuery(
     {
       category: undefined,
@@ -54,10 +56,31 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
     },
     { skip: !venue }
   );
-  const loading = isUninitialized || isLoading || isFetching;
-  const hasError = !!isError;
 
-  const sortedItems = (items ?? []).slice().sort((a, b) => {
+  // Full venue catalog, fetched lazily only for numeric (artikul) queries so we
+  // can resolve products by id even when the name search returns nothing.
+  const { data: allItems, isFetching: allFetching } = useGetProductsQuery(
+    { organizationSlug: venue },
+    { skip: !venue || !isNumericSearch }
+  );
+
+  const loading =
+    isUninitialized || isLoading || isFetching || (isNumericSearch && allFetching);
+
+  // Merge name-search results with id (artikul) matches, deduped by id.
+  const mergedItems = useMemo(() => {
+    const base = items ?? [];
+    if (!isNumericSearch) return base;
+    const idMatches = (allItems ?? []).filter((p) =>
+      String(p.id).includes(effectiveSearch)
+    );
+    const byId = new Map<number, IProduct>();
+    idMatches.forEach((p) => byId.set(p.id, p));
+    base.forEach((p) => byId.set(p.id, p));
+    return Array.from(byId.values());
+  }, [items, allItems, isNumericSearch, effectiveSearch]);
+
+  const sortedItems = mergedItems.slice().sort((a, b) => {
     const sa = Number.isFinite(a.quantity) && a.quantity > 0 ? 1 : 0;
     const sb = Number.isFinite(b.quantity) && b.quantity > 0 ? 1 : 0;
     if (sb !== sa) return sb - sa;
@@ -228,22 +251,6 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
                   <div className='mt-[6px] h-[14px] w-1/2 bg-gray-200 animate-pulse rounded' />
                 </div>
               ))}
-            </div>
-          ) : hasError ? (
-            <div className='mt-[24px]'>
-              <h3 className='text-center text-[24px] font-semibold mb-[24px]'>
-                Увы, ничего не найдено{'('}
-              </h3>
-              <img
-                src={
-                  typeof nothing === 'string'
-                    ? nothing
-                    : (nothing as unknown as { src?: string })?.src ||
-                      '/assets/images/not-found-products.png'
-                }
-                alt=''
-                className='w-full'
-              />
             </div>
           ) : sortedItems.length > 0 ? (
             <div className='search__catalog'>

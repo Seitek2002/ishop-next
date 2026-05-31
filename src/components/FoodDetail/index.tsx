@@ -1,5 +1,6 @@
 import { FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Check, Copy } from 'lucide-react';
 
 import { IModificator, IProduct } from 'types/products.types';
 import { useAppDispatch } from 'hooks/useAppDispatch';
@@ -34,6 +35,39 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   const [selectedSize, setSelectedSize] = useState<IModificator | null>(null);
   const dispatch = useAppDispatch();
   const startY = useRef<number | null>(null);
+
+  // Artikul (= product id) copy-to-clipboard
+  const [articulCopied, setArticulCopied] = useState(false);
+  const copyTimerRef = useRef<number | null>(null);
+  const handleCopyArticul = useCallback(async () => {
+    vibrateClick();
+    const value = String(item?.id ?? '');
+    if (!value) return;
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = value;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch {}
+    }
+    setArticulCopied(true);
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = window.setTimeout(() => setArticulCopied(false), 1500);
+  }, [item?.id]);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -267,6 +301,29 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                 ) : null}
               </div>
               <div className='product-description'>{descriptionNodes}</div>
+              {item?.id ? (
+                <button
+                  type='button'
+                  onClick={handleCopyArticul}
+                  title='Скопировать артикул'
+                  className='mt-[8px] inline-flex items-center gap-[6px] text-[13px] text-[#727272] cursor-pointer select-none'
+                >
+                  <span>
+                    Артикул:{' '}
+                    <span className='text-[#090A0B] font-medium'>{item.id}</span>
+                  </span>
+                  {articulCopied ? (
+                    <Check size={15} style={{ color: colorTheme }} />
+                  ) : (
+                    <Copy size={15} />
+                  )}
+                  {articulCopied && (
+                    <span className='text-[12px]' style={{ color: colorTheme }}>
+                      Скопировано
+                    </span>
+                  )}
+                </button>
+              ) : null}
             </div>
             {sizes.length !== 0 && (
               <div className='size'>

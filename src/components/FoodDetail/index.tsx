@@ -41,7 +41,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   const copyTimerRef = useRef<number | null>(null);
   const handleCopyArticul = useCallback(async () => {
     vibrateClick();
-    const value = String(item?.id ?? '');
+    const value = String(item?.article ?? item?.id ?? '');
     if (!value) return;
     try {
       await navigator.clipboard.writeText(value);
@@ -61,7 +61,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
     setArticulCopied(true);
     if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
     copyTimerRef.current = window.setTimeout(() => setArticulCopied(false), 1500);
-  }, [item?.id]);
+  }, [item?.article, item?.id]);
 
   useEffect(() => {
     return () => {
@@ -310,7 +310,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                 >
                   <span>
                     Артикул:{' '}
-                    <span className='text-[#090A0B] font-medium'>{item.id}</span>
+                    <span className='text-[#090A0B] font-medium'>{item.article ?? item.id}</span>
                   </span>
                   {articulCopied ? (
                     <Check size={15} style={{ color: colorTheme }} />

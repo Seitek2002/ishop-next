@@ -71,7 +71,7 @@ const SubHeader = () => {
   return (
     <div className='sub-header'>
       <div className='sub-header__content'>
-        {venue === 'heyyou' ? (
+        {data?.isCoBranded ? (
           <div className='venue venue--placeholder' />
         ) : (
           <div className='venue'>

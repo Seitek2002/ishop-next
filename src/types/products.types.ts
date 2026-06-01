@@ -5,6 +5,7 @@ export interface ICategory {
 
 export interface IFoodCart {
   id: string;
+  article?: string | null;
   productName: string;
   productDescription: string | null;
   productPrice: number;
@@ -26,6 +27,8 @@ export interface IModificator {
 
 export interface IProduct {
   id: number;
+  // Human-readable article/SKU from backend (format {SLUG}-{NNNN}); may be null.
+  article?: string | null;
   productName: string;
   productDescription: string | null;
   productPrice: number;

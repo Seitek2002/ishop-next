@@ -72,7 +72,7 @@ const SupHeader: FC<IProps> = ({ searchText, setSearchText }) => {
   return (
     <div className='header'>
       <div className='header__content'>
-        {venue === 'heyyou' && (data?.logo || data?.companyName) ? (
+        {data?.isCoBranded && (data?.logo || data?.companyName) ? (
           <div className='logo logo--venue'>
             {data?.logo && (
               <img src={data.logo} alt={data?.companyName || ''} />

@@ -464,18 +464,26 @@ const Cart: React.FC = () => {
   }, 0);
   const serviceFeeAmt = subtotal * (venueData.serviceFeePercent / 100);
   const isDeliveryType = orderTypes[activeIndex]?.value === 3;
+  // Free-form delivery cost label (e.g. "Оплата за счёт клиента"). When set, it
+  // replaces the numeric fee and delivery is excluded from the total.
+  const deliveryFeeLabel = venueData?.deliveryFeeLabel?.trim() || null;
+  const deliveryTime = venueData?.deliveryTime?.trim() || null;
   const deliveryFreeFrom =
     venueData?.deliveryFreeFrom != null
       ? Number(venueData.deliveryFreeFrom)
       : null;
   const deliveryFixedFee = Number(venueData?.deliveryFixedFee || 0);
-  const deliveryFee = isDeliveryType
-    ? deliveryFreeFrom !== null && subtotal >= deliveryFreeFrom
-      ? 0
-      : deliveryFixedFee
-    : 0;
+  const deliveryFee =
+    isDeliveryType && !deliveryFeeLabel
+      ? deliveryFreeFrom !== null && subtotal >= deliveryFreeFrom
+        ? 0
+        : deliveryFixedFee
+      : 0;
   const hasFreeDeliveryHint =
-    isDeliveryType && deliveryFreeFrom !== null && subtotal < deliveryFreeFrom;
+    isDeliveryType &&
+    !deliveryFeeLabel &&
+    deliveryFreeFrom !== null &&
+    subtotal < deliveryFreeFrom;
   const total =
     Math.round((subtotal + serviceFeeAmt + deliveryFee) * 100) / 100;
   const maxUsablePoints = Math.min(availablePoints, Math.floor(total));
@@ -856,6 +864,8 @@ const Cart: React.FC = () => {
                   isDelivery={isDeliveryType}
                   deliveryFreeFrom={deliveryFreeFrom}
                   deliveryFee={deliveryFee}
+                  deliveryFeeLabel={deliveryFeeLabel}
+                  deliveryTime={deliveryTime}
                   subtotal={subtotal}
                   colorTheme={colorTheme}
                   t={t}
@@ -871,6 +881,7 @@ const Cart: React.FC = () => {
                   subtotal={subtotal}
                   isDelivery={isDeliveryType}
                   deliveryFee={deliveryFee}
+                  deliveryFeeLabel={deliveryFeeLabel}
                   hasFreeDeliveryHint={hasFreeDeliveryHint}
                   deliveryFreeFrom={deliveryFreeFrom}
                   availablePoints={availablePoints}

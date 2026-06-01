@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useGetProductsQuery } from 'api/Products.api';
@@ -40,9 +40,7 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
   };
 
   const effectiveSearch = (searchText || '').trim();
-  // Artikul (article) = product id. When the query is purely numeric, also
-  // match it against product ids client-side (the backend search is name-only).
-  const isNumericSearch = /^\d+$/.test(effectiveSearch);
+  // Search matches both product name and article (artikul) on the backend.
   const {
     data: items,
     isLoading,
@@ -57,30 +55,9 @@ const Search: FC<IProps> = ({ onSearchChange, searchText, setSearchText }) => {
     { skip: !venue }
   );
 
-  // Full venue catalog, fetched lazily only for numeric (artikul) queries so we
-  // can resolve products by id even when the name search returns nothing.
-  const { data: allItems, isFetching: allFetching } = useGetProductsQuery(
-    { organizationSlug: venue },
-    { skip: !venue || !isNumericSearch }
-  );
+  const loading = isUninitialized || isLoading || isFetching;
 
-  const loading =
-    isUninitialized || isLoading || isFetching || (isNumericSearch && allFetching);
-
-  // Merge name-search results with id (artikul) matches, deduped by id.
-  const mergedItems = useMemo(() => {
-    const base = items ?? [];
-    if (!isNumericSearch) return base;
-    const idMatches = (allItems ?? []).filter((p) =>
-      String(p.id).includes(effectiveSearch)
-    );
-    const byId = new Map<number, IProduct>();
-    idMatches.forEach((p) => byId.set(p.id, p));
-    base.forEach((p) => byId.set(p.id, p));
-    return Array.from(byId.values());
-  }, [items, allItems, isNumericSearch, effectiveSearch]);
-
-  const sortedItems = mergedItems.slice().sort((a, b) => {
+  const sortedItems = (items ?? []).slice().sort((a, b) => {
     const sa = Number.isFinite(a.quantity) && a.quantity > 0 ? 1 : 0;
     const sb = Number.isFinite(b.quantity) && b.quantity > 0 ? 1 : 0;
     if (sb !== sa) return sb - sa;

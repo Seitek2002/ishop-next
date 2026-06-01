@@ -235,10 +235,11 @@ export const ContactsForm: React.FC<{
 export const DeliveryInfoBanner: React.FC<{
   isDelivery: boolean;
   deliveryFreeFrom: number | null;
+  deliveryFee: number;
   subtotal: number;
   colorTheme?: string;
   t: TFunc;
-}> = ({ isDelivery, deliveryFreeFrom, subtotal, colorTheme, t }) => {
+}> = ({ isDelivery, deliveryFreeFrom, deliveryFee, subtotal, colorTheme, t }) => {
   if (!isDelivery) return null;
 
   return (
@@ -252,7 +253,16 @@ export const DeliveryInfoBanner: React.FC<{
       <div className='cart__delivery-text flex items-center justify-between gap-2 flex-1'>
         <div>
           {deliveryFreeFrom === null ? (
-            <span>{t('deliveryFee')}</span>
+            deliveryFee > 0 ? (
+              <span>{t('deliveryFee')}</span>
+            ) : (
+              <span>
+                {t('deliveryFee')}{' '}
+                <span style={{ color: colorTheme, fontWeight: 600 }}>
+                  {t('freeDeliveryLabel')}
+                </span>
+              </span>
+            )
           ) : subtotal >= deliveryFreeFrom ? (
             <span>
               {t('freeDeliveryYouGet')}{' '}
@@ -354,7 +364,9 @@ export const SumDetails: React.FC<{
         {isDelivery && (
           <div className='cart__sum-item text-[#80868B]'>
             {t('deliveryFee')}
-            <div className='cart__sum-total delivery'>{deliveryFee} c</div>
+            <div className='cart__sum-total delivery'>
+              {deliveryFee > 0 ? `${deliveryFee} c` : t('freeDeliveryLabel')}
+            </div>
           </div>
         )}
 

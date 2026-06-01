@@ -855,6 +855,7 @@ const Cart: React.FC = () => {
                 <DeliveryInfoBanner
                   isDelivery={isDeliveryType}
                   deliveryFreeFrom={deliveryFreeFrom}
+                  deliveryFee={deliveryFee}
                   subtotal={subtotal}
                   colorTheme={colorTheme}
                   t={t}

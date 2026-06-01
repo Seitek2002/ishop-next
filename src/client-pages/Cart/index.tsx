@@ -84,11 +84,16 @@ const Cart: React.FC = () => {
   const [promoCode, setPromoCode] = useState('');
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [showPromoInput, setShowPromoInput] = useState(false);
-  const storedPromo = localStorage.getItem('promoCode') || '';
-  if (storedPromo) {
-    setPromoCode(storedPromo);
-    setShowPromoInput(true);
-  }
+
+  // Read the saved promo code after mount (not during render) so the server and
+  // initial client render match — avoids a hydration mismatch and a setState-in-render.
+  useEffect(() => {
+    const storedPromo = localStorage.getItem('promoCode') || '';
+    if (storedPromo) {
+      setPromoCode(storedPromo);
+      setShowPromoInput(true);
+    }
+  }, []);
 
   const [phoneError, setPhoneError] = useState('');
   const [addressError, setAddressError] = useState('');

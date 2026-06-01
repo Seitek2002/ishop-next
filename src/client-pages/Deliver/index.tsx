@@ -7,16 +7,16 @@ import { useAppSelector } from 'hooks/useAppSelector';
 import { loadUsersDataFromStorage } from 'utils/storageUtils';
 import Header from 'src/components/Header';
 
-import { useMask } from '@react-input/mask';
 import { setUsersData } from 'src/store/yourFeatureSlice';
+import { normalizeKgPhone } from 'utils/phone';
 
 const Deliver = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();
   const userData = loadUsersDataFromStorage();
-  const [phoneNumber, setPhoneNumber] = useState(
-    '+' + userData.phoneNumber || ''
+  const [phoneNumber, setPhoneNumber] = useState(() =>
+    normalizeKgPhone(userData.phoneNumber || '')
   );
   const [address, setAddress] = useState(userData.address || '');
   const [comment, setComment] = useState(userData.comment);
@@ -46,11 +46,6 @@ const Deliver = () => {
     navigate(`/${params.venue}/d`);
   };
 
-  const inputRef = useMask({
-    mask: '+996_________',
-    replacement: { _: /\d/ },
-  });
-
   const { t } = useTranslation();
   const isFormValid = useMemo(() => {
     return phoneNumber.length >= 12 && address.trim().length > 3;
@@ -69,11 +64,13 @@ const Deliver = () => {
           </div>
           <input
             required
-            type='text'
-            placeholder='+996'
-            ref={inputRef}
+            type='tel'
+            inputMode='tel'
+            autoComplete='tel'
+            name='phone'
+            placeholder='+996 XXX XXX XXX'
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            onChange={(e) => setPhoneNumber(normalizeKgPhone(e.target.value))}
           />
           <input
             required

@@ -141,7 +141,6 @@ export const SpotsSelector: React.FC<{
 export const ContactsForm: React.FC<{
   t: TFunc;
   colorTheme?: string;
-  inputRef?: React.Ref<HTMLInputElement>;
   phoneNumber: string;
   onPhoneChange: (v: string) => void;
   phoneError?: string;
@@ -156,7 +155,6 @@ export const ContactsForm: React.FC<{
 }> = ({
   t,
   colorTheme,
-  inputRef,
   phoneNumber,
   onPhoneChange,
   phoneError,
@@ -179,10 +177,12 @@ export const ContactsForm: React.FC<{
           </span>
         </span>
         <input
-          type='text'
-          placeholder='+996'
+          type='tel'
+          inputMode='tel'
+          autoComplete='tel'
+          name='phone'
+          placeholder='+996 XXX XXX XXX'
           id='phoneNumber'
-          ref={inputRef}
           value={phoneNumber}
           onChange={(e) => onPhoneChange(e.target.value)}
           className='text-[16px]'

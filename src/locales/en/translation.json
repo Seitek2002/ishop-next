@@ -49,6 +49,7 @@
   },
   "services": "Service",
   "deliveryFee": "Delivery",
+  "freeDeliveryLabel": "Free",
   "freeDeliveryFrom": "Free delivery from",
   "freeDeliveryYouGet": "You get",
   "freeDelivery": "free delivery",

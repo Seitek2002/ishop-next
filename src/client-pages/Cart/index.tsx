@@ -36,8 +36,8 @@ import WorkTimeModal from 'components/WorkTimeModal';
 import ServerErrorModal from 'components/ServerErrorModal';
 
 
-import { useMask } from '@react-input/mask';
 import { clearCart, setUsersData } from 'src/store/yourFeatureSlice';
+import { normalizeKgPhone } from 'utils/phone';
 
 const Cart: React.FC = () => {
   const navigate = useNavigate();
@@ -76,19 +76,24 @@ const Cart: React.FC = () => {
     }
   }, [usersActiveSpot, selectedSpot]);
 
-  const [phoneNumber, setPhoneNumber] = useState(
-    `+996${userData.phoneNumber.replace('996', '')}`
+  const [phoneNumber, setPhoneNumber] = useState(() =>
+    normalizeKgPhone(userData.phoneNumber || '')
   );
   const [comment, setComment] = useState('');
   const [address, setAddress] = useState(userData.address || '');
   const [promoCode, setPromoCode] = useState('');
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [showPromoInput, setShowPromoInput] = useState(false);
-  const storedPromo = localStorage.getItem('promoCode') || '';
-  if (storedPromo) {
-    setPromoCode(storedPromo);
-    setShowPromoInput(true);
-  }
+
+  // Read the saved promo code after mount (not during render) so the server and
+  // initial client render match — avoids a hydration mismatch and a setState-in-render.
+  useEffect(() => {
+    const storedPromo = localStorage.getItem('promoCode') || '';
+    if (storedPromo) {
+      setPromoCode(storedPromo);
+      setShowPromoInput(true);
+    }
+  }, []);
 
   const [phoneError, setPhoneError] = useState('');
   const [addressError, setAddressError] = useState('');
@@ -204,11 +209,6 @@ const Cart: React.FC = () => {
     [data]
   );
 
-  const inputRef = useMask({
-    mask: '+996_________',
-    replacement: { _: /\d/ },
-  });
-
   const isSelfPickupRoute = useMemo(() => {
     try {
       const mp = (localStorage.getItem('mainPage') || '').toLowerCase();
@@ -247,11 +247,13 @@ const Cart: React.FC = () => {
   };
 
   const handlePhoneChange = (value: string) => {
-    setPhoneNumber(value);
+    const normalized = normalizeKgPhone(value);
+    setPhoneNumber(normalized);
 
-    if (!value.trim()) {
+    const digits = normalized.replace(/\D/g, '');
+    if (digits.length <= 3) {
       setPhoneError('Это обязательное поле');
-    } else if (value.length < 13) {
+    } else if (digits.length < 12) {
       setPhoneError('Тут нужно минимум 12 символов');
     } else {
       setPhoneError('');
@@ -836,7 +838,6 @@ const Cart: React.FC = () => {
                 <ContactsForm
                   t={t}
                   colorTheme={colorTheme}
-                  inputRef={inputRef}
                   phoneNumber={phoneNumber}
                   onPhoneChange={handlePhoneChange}
                   phoneError={phoneError}
@@ -854,6 +855,7 @@ const Cart: React.FC = () => {
                 <DeliveryInfoBanner
                   isDelivery={isDeliveryType}
                   deliveryFreeFrom={deliveryFreeFrom}
+                  deliveryFee={deliveryFee}
                   subtotal={subtotal}
                   colorTheme={colorTheme}
                   t={t}

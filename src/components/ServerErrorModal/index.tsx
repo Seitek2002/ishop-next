@@ -75,10 +75,13 @@ const ServerErrorModal: FC<ServerErrorModalProps> = ({
       <div
         className={isShow ? 'clear-cart-modal active' : 'clear-cart-modal'}
         style={{
-          width: 'calc(100vw - 64px)',
-          maxWidth: '720px',
+          width: 'calc(100vw - 32px)',
+          maxWidth: '560px',
           height: 'auto',
+          maxHeight: 'calc(100dvh - 32px)',
           padding: '16px 24px',
+          boxSizing: 'border-box',
+          overflowY: 'auto',
         }}
         role="dialog"
         aria-modal="true"

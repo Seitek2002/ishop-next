@@ -49,6 +49,7 @@
   },
   "services": "Кызмат",
   "deliveryFee": "Жеткирүү",
+  "freeDeliveryLabel": "Бекер",
   "freeDeliveryFrom": "Бекер жеткирүү от",
   "freeDeliveryYouGet": "Сиз аласыз",
   "freeDelivery": "бекер жеткирүү",

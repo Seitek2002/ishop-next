@@ -28,9 +28,9 @@ export interface IVenues {
   // Free-form delivery cost label (e.g. "Оплата за счёт клиента"). When set, it
   // is shown instead of the numeric fee and delivery is excluded from the total.
   deliveryFeeLabel?: string | null;
-  // Estimated delivery time label (e.g. "30–60 мин"); hide the chip when null.
+  // Estimated delivery time label, fully formatted by the backend (e.g. "1–2 дня"
+  // or "~30 мин"); hide the chip when null.
   deliveryTime?: string | null;
-  deliveryTimeMinutes?: number | null;
   // Co-branded venue header ("Powered by iShop.kg") toggle from backend.
   isCoBranded?: boolean;
   // Optional weekly schedule from backend

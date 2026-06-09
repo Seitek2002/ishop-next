@@ -83,6 +83,7 @@
   },
   "button": {
     "add": "Add",
+    "remove": "Remove",
     "addToBasket": "Add to cart",
     "order": "Order",
     "next": "Next",

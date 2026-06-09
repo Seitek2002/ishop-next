@@ -15,7 +15,7 @@ const whitePlus = '/assets/icons/CatalogCard/white-plus.svg';
 
 
 
-import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
+import { addToCart, incrementFromCart, setCartQuantity } from 'src/store/yourFeatureSlice';
 
 interface IProps {
   item: IProduct;
@@ -103,27 +103,49 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   };
 
 
+  // Allow going down to 0 so the user can cancel the item right from the modal.
   const handleCounterChange = useCallback((delta: number) => {
     vibrateClick();
-    setCounter((prev) => Math.max(1, prev + delta));
+    setCounter((prev) => Math.max(0, prev + delta));
   }, []);
+
+  const sizeId = selectedSize?.id ?? 0;
+  const curLineId = item.id + ',' + sizeId;
+  const existingLine = cart.find((ci) => ci.id === curLineId);
 
   const handleDone = useCallback(() => {
     vibrateClick();
     if (item) {
-      const sizeId = selectedSize?.id ?? 0;
+      // counter is the DESIRED total quantity for this size (not a delta to add).
+      // 0 → remove the line entirely ("cancel purchase").
+      if (existingLine) {
+        // Clamp to available stock, accounting for quantity held by OTHER sizes.
+        const baseId = String(item.id);
+        const otherTotal = cart
+          .filter(
+            (ci) => String(ci.id).split(',')[0] === baseId && ci.id !== curLineId
+          )
+          .reduce((sum, ci) => sum + ci.quantity, 0);
+        const maxAvail = Number.isFinite(item.quantity) ? item.quantity : Infinity;
+        const maxForThisLine = Math.max(0, maxAvail - otherTotal);
+        const finalQty = Math.min(counter, maxForThisLine);
+        dispatch(setCartQuantity({ id: curLineId, quantity: finalQty }));
+        setIsShow();
+        return;
+      }
 
-      // Enforce stock across all modificators for this product
+      // Fresh add: enforce stock across all modificators for this product.
       const baseId = String(item.id);
       const currentTotal = cart
         .filter((ci) => String(ci.id).split(',')[0] === baseId)
         .reduce((sum, ci) => sum + ci.quantity, 0);
       const maxAvail = Number.isFinite(item.quantity) ? item.quantity : Infinity;
       const remaining = Math.max(0, maxAvail - currentTotal);
-      if (remaining <= 0) {
+      const qtyToAdd = Math.min(counter, remaining);
+      if (qtyToAdd <= 0) {
+        setIsShow();
         return;
       }
-      const qtyToAdd = Math.min(counter, remaining);
 
       const newItem = {
         ...item,
@@ -131,7 +153,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
         category:
           item.category ?? item.categories?.[0] ?? { id: 0, categoryName: '' },
         modificators: selectedSize ?? undefined,
-        id: item.id + ',' + sizeId,
+        id: curLineId,
         quantity: qtyToAdd,
         availableQuantity: item.quantity,
       };
@@ -139,7 +161,7 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
     }
 
     setIsShow();
-  }, [item, setIsShow, selectedSize, counter, cart, dispatch]);
+  }, [item, setIsShow, selectedSize, counter, cart, dispatch, existingLine, curLineId]);
 
   const selectSize = useCallback(
     (sizeKey: IModificator) => {
@@ -198,14 +220,9 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   }, [item.modificators]);
 
   useEffect(() => {
-    const curId = item.id + ',' + (selectedSize?.id ?? 0);
-    const found = cart.find((cartItem) => cartItem.id === curId);
-    if (found) {
-      setCounter(found.quantity || 1);
-    } else {
-      setCounter(1);
-    }
-  }, [cart, item.id, selectedSize?.id]);
+    // Mirror the in-cart quantity for the selected size; default to 1 for a fresh item.
+    setCounter(existingLine ? existingLine.quantity : 1);
+  }, [existingLine]);
 
   useEffect(() => {
     setIsLoaded(false);
@@ -374,7 +391,11 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
                   className='counter__right'
                   style={{ backgroundColor: colorTheme, color: '#fff' }}
                 >
-                  <button onClick={handleDone}>{t('button.add')}</button>
+                  <button onClick={handleDone}>
+                    {existingLine && counter === 0
+                      ? t('button.remove')
+                      : t('button.add')}
+                  </button>
                 </div>
               </footer>
             ) : (

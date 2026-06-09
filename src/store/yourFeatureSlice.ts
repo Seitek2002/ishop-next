@@ -108,6 +108,20 @@ const yourFeatureSlice = createSlice({
       }
       saveCartToStorage(state.cart);
     },
+    // Set an exact quantity for a specific cart line (matched by full id, e.g. "12,3").
+    // Quantity <= 0 removes the line. Used by the product modal so the counter
+    // *sets* the amount instead of accumulating on top of what's already in the cart.
+    setCartQuantity: (state, action: PayloadAction<{ id: string; quantity: number }>) => {
+      const { id, quantity } = action.payload;
+      const line = state.cart.find((ci) => ci.id === id);
+      if (!line) return;
+      if (quantity <= 0) {
+        state.cart = state.cart.filter((ci) => ci.id !== id);
+      } else {
+        line.quantity = quantity;
+      }
+      saveCartToStorage(state.cart);
+    },
     clearCart: (state) => {
       state.cart = [];
       localStorage.removeItem('cartItems');
@@ -135,6 +149,7 @@ export const {
   setOrder,
   addToCart,
   incrementFromCart,
+  setCartQuantity,
   setUsersData,
 } = yourFeatureSlice.actions;
 

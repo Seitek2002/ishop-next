@@ -34,47 +34,66 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
     if (foodDetail) foodDetail(item as IProduct);
   };
 
+  // All cart lines that belong to this product (a sized product may have several).
+  const matchingLines = cart.filter(
+    (cartItem) => +cartItem.id.split(',')[0] === item.id
+  );
+  const totalInCart = matchingLines.reduce((sum, ci) => sum + ci.quantity, 0);
+  // Only one size in the cart → we can edit it inline without the modal.
+  const singleLine = matchingLines.length === 1 ? matchingLines[0] : null;
+
+  const addStock = () => {
+    // Prevent adding more than stock (across all modificators of this product)
+    if (item.quantity <= 0 || totalInCart >= item.quantity) {
+      onMaxExceeded && onMaxExceeded();
+      return;
+    }
+
+    if (singleLine) {
+      // Sized product with one size in cart: add another of that same size.
+      dispatch(
+        addToCart({
+          ...singleLine,
+          quantity: 1,
+          availableQuantity: singleLine.availableQuantity ?? item.quantity,
+        })
+      );
+      return;
+    }
+
+    const newItem = {
+      ...item,
+      // Ensure cart item always has a single category (fallback to first categories[] or empty)
+      category: item.category ??
+        item.categories?.[0] ?? { id: 0, categoryName: '' },
+      id: item.id + '',
+      modificators: undefined,
+      quantity: 1,
+      availableQuantity: item.quantity,
+    };
+    dispatch(addToCart(newItem));
+  };
+
   const handleClick = () => {
     vibrateClick();
-    if (item.modificators.length) {
+    // Sized product: add inline only when exactly one size is in the cart;
+    // otherwise the modal is needed to pick the size.
+    if (item.modificators.length && !singleLine) {
       openFoodDetail();
-    } else {
-      // Prevent adding more than stock
-      const baseId = String(item.id);
-      const currentTotal = cart
-        .filter((ci) => String(ci.id).split(',')[0] === baseId)
-        .reduce((sum, ci) => sum + ci.quantity, 0);
-      if (item.quantity <= 0 || currentTotal >= item.quantity) {
-        onMaxExceeded && onMaxExceeded();
-        // Out of stock or reached limit
-        return;
-      }
-
-      const newItem = {
-        ...item,
-        // Ensure cart item always has a single category (fallback to first categories[] or empty)
-        category: item.category ??
-          item.categories?.[0] ?? { id: 0, categoryName: '' },
-        id: item.id + '',
-        modificators: undefined,
-        quantity: 1,
-        availableQuantity: item.quantity,
-      };
-      dispatch(addToCart(newItem));
+      return;
     }
+    addStock();
   };
   const handleDecrement = () => {
     vibrateClick();
-    if (item.modificators.length) {
+    // Sized product with multiple sizes in cart → ambiguous which to remove,
+    // so open the modal. Otherwise decrement the matching line directly.
+    if (item.modificators.length && !singleLine) {
       openFoodDetail();
-    } else {
-      dispatch(incrementFromCart(item));
+      return;
     }
+    dispatch(incrementFromCart(singleLine ?? item));
   };
-
-  const foundCartItem = cart.find(
-    (cartItem) => +cartItem.id.split(',')[0] == item.id
-  );
 
   return (
     <div className='cart-block bg-white'>
@@ -101,7 +120,7 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
         />
         <div
           className={
-            foundCartItem ? 'add-btn opacity-90 active' : 'add-btn opacity-90'
+            totalInCart > 0 ? 'add-btn opacity-90 active' : 'add-btn opacity-90'
           }
           style={{ backgroundColor: colorTheme }}
         >
@@ -114,10 +133,10 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
               }}
               className='absolute items-center justify-center'
               style={{
-                width: foundCartItem?.quantity ? 18 : 0,
+                width: totalInCart ? 18 : 0,
                 height: 18,
-                left: foundCartItem?.quantity ? 0 : 100,
-                display: foundCartItem?.quantity ? 'flex' : 'none',
+                left: totalInCart ? 0 : 100,
+                display: totalInCart ? 'flex' : 'none',
                 transition: '0.5s',
                 color: '#fff',
                 lineHeight: '18px',
@@ -133,14 +152,14 @@ const CatalogCard: FC<IProps> = ({ item, foodDetail, onMaxExceeded }) => {
                 overflow: 'hidden',
               }}
             >
-              {foundCartItem?.quantity}
+              {totalInCart || ''}
             </span>
             <div></div>
           </div>
           <div
             className='fixed-plus'
             style={{
-              width: foundCartItem?.quantity ? '25%' : '100%',
+              width: totalInCart ? '25%' : '100%',
               right: 0,
               transition: '1.0s',
             }}

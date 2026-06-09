@@ -8,14 +8,12 @@ import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
 
 const close = '/assets/icons/close.svg';
-const minus = '/assets/icons/Busket/minus.svg';
-const plus = '/assets/icons/Busket/plus.svg';
 const whiteMinus = '/assets/icons/CatalogCard/white-minus.svg';
 const whitePlus = '/assets/icons/CatalogCard/white-plus.svg';
 
 
 
-import { addToCart, incrementFromCart, setCartQuantity } from 'src/store/yourFeatureSlice';
+import { addToCart, incrementFromCart } from 'src/store/yourFeatureSlice';
 
 interface IProps {
   item: IProduct;
@@ -30,7 +28,6 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   );
   const [isLoaded, setIsLoaded] = useState(false);
   const { t } = useTranslation();
-  const [counter, setCounter] = useState(1);
   const sizes: IModificator[] = item.modificators || [];
   const [selectedSize, setSelectedSize] = useState<IModificator | null>(null);
   const dispatch = useAppDispatch();
@@ -103,65 +100,41 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
   };
 
 
-  // Allow going down to 0 so the user can cancel the item right from the modal.
-  const handleCounterChange = useCallback((delta: number) => {
-    vibrateClick();
-    setCounter((prev) => Math.max(0, prev + delta));
-  }, []);
-
   const sizeId = selectedSize?.id ?? 0;
   const curLineId = item.id + ',' + sizeId;
   const existingLine = cart.find((ci) => ci.id === curLineId);
 
-  const handleDone = useCallback(() => {
+  // Live +/- for the selected size — edits the cart directly (no separate
+  // "Add" commit), mirroring how products without modificators behave.
+  const handleSizeIncrement = useCallback(() => {
     vibrateClick();
-    if (item) {
-      // counter is the DESIRED total quantity for this size (not a delta to add).
-      // 0 → remove the line entirely ("cancel purchase").
-      if (existingLine) {
-        // Clamp to available stock, accounting for quantity held by OTHER sizes.
-        const baseId = String(item.id);
-        const otherTotal = cart
-          .filter(
-            (ci) => String(ci.id).split(',')[0] === baseId && ci.id !== curLineId
-          )
-          .reduce((sum, ci) => sum + ci.quantity, 0);
-        const maxAvail = Number.isFinite(item.quantity) ? item.quantity : Infinity;
-        const maxForThisLine = Math.max(0, maxAvail - otherTotal);
-        const finalQty = Math.min(counter, maxForThisLine);
-        dispatch(setCartQuantity({ id: curLineId, quantity: finalQty }));
-        setIsShow();
-        return;
-      }
+    if (!item) return;
+    // Enforce stock across all modificators of this product.
+    const baseId = String(item.id);
+    const currentTotal = cart
+      .filter((ci) => String(ci.id).split(',')[0] === baseId)
+      .reduce((sum, ci) => sum + ci.quantity, 0);
+    const maxAvail = Number.isFinite(item.quantity) ? item.quantity : Infinity;
+    if (currentTotal >= maxAvail) return;
 
-      // Fresh add: enforce stock across all modificators for this product.
-      const baseId = String(item.id);
-      const currentTotal = cart
-        .filter((ci) => String(ci.id).split(',')[0] === baseId)
-        .reduce((sum, ci) => sum + ci.quantity, 0);
-      const maxAvail = Number.isFinite(item.quantity) ? item.quantity : Infinity;
-      const remaining = Math.max(0, maxAvail - currentTotal);
-      const qtyToAdd = Math.min(counter, remaining);
-      if (qtyToAdd <= 0) {
-        setIsShow();
-        return;
-      }
+    const newItem = {
+      ...item,
+      // Ensure required cart shape: always provide a single category
+      category:
+        item.category ?? item.categories?.[0] ?? { id: 0, categoryName: '' },
+      modificators: selectedSize ?? undefined,
+      id: curLineId,
+      quantity: 1,
+      availableQuantity: item.quantity,
+    };
+    dispatch(addToCart(newItem));
+  }, [item, cart, selectedSize, curLineId, dispatch]);
 
-      const newItem = {
-        ...item,
-        // Ensure required cart shape: always provide a single category
-        category:
-          item.category ?? item.categories?.[0] ?? { id: 0, categoryName: '' },
-        modificators: selectedSize ?? undefined,
-        id: curLineId,
-        quantity: qtyToAdd,
-        availableQuantity: item.quantity,
-      };
-      dispatch(addToCart(newItem));
-    }
-
-    setIsShow();
-  }, [item, setIsShow, selectedSize, counter, cart, dispatch, existingLine, curLineId]);
+  const handleSizeDecrement = useCallback(() => {
+    vibrateClick();
+    // incrementFromCart decrements and removes the line when it hits 0.
+    if (existingLine) dispatch(incrementFromCart(existingLine));
+  }, [existingLine, dispatch]);
 
   const selectSize = useCallback(
     (sizeKey: IModificator) => {
@@ -218,11 +191,6 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
       setSelectedSize(null);
     }
   }, [item.modificators]);
-
-  useEffect(() => {
-    // Mirror the in-cart quantity for the selected size; default to 1 for a fresh item.
-    setCounter(existingLine ? existingLine.quantity : 1);
-  }, [existingLine]);
 
   useEffect(() => {
     setIsLoaded(false);
@@ -372,31 +340,41 @@ const FoodDetail: FC<IProps> = ({ setIsShow, item, isShow }) => {
             )}
             {sizes.length !== 0 ? (
               <footer className='counter'>
-                <div className='counter__left'>
-                  <img
-                    src={minus}
-                    alt=''
-                    onClick={() => handleCounterChange(-1)}
-                    className='cursor-pointer'
-                  />
-                  <span>{counter}</span>
-                  <img
-                    src={plus}
-                    alt=''
-                    onClick={() => handleCounterChange(1)}
-                    className='cursor-pointer'
-                  />
-                </div>
-                <div
-                  className='counter__right'
-                  style={{ backgroundColor: colorTheme, color: '#fff' }}
-                >
-                  <button onClick={handleDone}>
-                    {existingLine && counter === 0
-                      ? t('button.remove')
-                      : t('button.add')}
-                  </button>
-                </div>
+                {existingLine ? (
+                  <div
+                    className='counter__left'
+                    style={{
+                      gridColumn: '1 / -1',
+                      backgroundColor: colorTheme,
+                      color: '#fff',
+                    }}
+                  >
+                    <img
+                      src={whiteMinus}
+                      alt='minus'
+                      onClick={handleSizeDecrement}
+                      className='cursor-pointer'
+                    />
+                    <span>{existingLine.quantity}</span>
+                    <img
+                      src={whitePlus}
+                      alt='plus'
+                      onClick={handleSizeIncrement}
+                      className='cursor-pointer'
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className='counter__right'
+                    style={{
+                      gridColumn: '1 / -1',
+                      backgroundColor: colorTheme,
+                      color: '#fff',
+                    }}
+                  >
+                    <button onClick={handleSizeIncrement}>{t('button.add')}</button>
+                  </div>
+                )}
               </footer>
             ) : (
               <div className='food-detail__actions'>

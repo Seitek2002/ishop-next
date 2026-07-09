@@ -17,7 +17,7 @@ const Item: FC<IProps> = ({ item, active, selectCategory }) => {
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
   );
-  const title = (item.categoryName || '').trim().split(/\s+/).slice(0, 2).join(' ');
+  const title = (item.categoryName || '').trim();
 
   return (
     <div

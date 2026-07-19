@@ -5,6 +5,7 @@ import Providers from './providers';
 import WsGuard from '@/components/WsGuard';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
+import { headers } from 'next/headers';
 
 const geistInter = Inter({
   variable: '--font-geist-inter',
@@ -21,17 +22,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+
   return (
     <html lang='ru'>
       <body className={`${geistInter.variable} antialiased`}>
         <WsGuard />
         {/* Meta Pixel Code */}
-        <Script id='fb-pixel' strategy='afterInteractive'>{`
+        <Script id='fb-pixel' strategy='afterInteractive' nonce={nonce}>{`
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};

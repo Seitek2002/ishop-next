@@ -45,8 +45,11 @@ export const ordersApi = baseApi.injectEndpoints({
         },
       }),
     }),
-    getOrdersById: builder.query<IOrderById, { id: number }>({
-      query: ({ id }) => `orders/${id}/`,
+    getOrdersById: builder.query<IOrderById, { id: number; phone: string }>({
+      query: ({ id, phone }) => ({
+        url: `orders/${id}/`,
+        params: { phone },
+      }),
     }),
   }),
   overrideExisting: false,

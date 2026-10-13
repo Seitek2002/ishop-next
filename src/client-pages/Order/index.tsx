@@ -33,9 +33,13 @@ const Order = () => {
   const [active, setActive] = useState(false);
   const user = JSON.parse(localStorage.getItem('users') ?? '{}');
   const params = useParams();
-  const { data, isError } = useGetOrdersByIdQuery({
-    id: Number(params.id),
-  });
+  const phone = String(user.phoneNumber ?? '');
+  const { data, isError: isRequestError } = useGetOrdersByIdQuery(
+    { id: Number(params.id), phone },
+    { skip: !phone }
+  );
+  // Без телефона (заказ открыт на другом устройстве) бэкенд заказ не отдаст
+  const isError = isRequestError || !phone;
   const venueData = useAppSelector((state) => state.yourFeature.venue);
   const colorTheme = useAppSelector(
     (state) => state.yourFeature.venue?.colorTheme
@@ -68,7 +72,10 @@ const Order = () => {
   useEffect(() => {
     if (order) {
       setCurrentStatus(
-        statusMessages[order.serviceMode]?.[order.status] ?? null
+        // Для статусов без своей иконки (например, «Ожидает оплату») показываем «в обработке»
+        statusMessages[order.serviceMode]?.[order.status] ??
+          statusMessages[order.serviceMode]?.[0] ??
+          null
       );
     }
   }, [order]);
@@ -83,13 +90,18 @@ const Order = () => {
     };
 
     ws.onmessage = (event) => {
-      const wsData: { order_id: number; status: number } = JSON.parse(
-        event.data
-      );
+      const wsData: { order_id: number; status: number; status_text?: string } =
+        JSON.parse(event.data);
       // Only update if the order_id matches the current order
       if (wsData.order_id === Number(params.id)) {
         setOrder((prevOrder) =>
-          prevOrder ? { ...prevOrder, status: wsData.status } : prevOrder
+          prevOrder
+            ? {
+                ...prevOrder,
+                status: wsData.status,
+                statusText: wsData.status_text ?? prevOrder.statusText,
+              }
+            : prevOrder
         );
       }
     };

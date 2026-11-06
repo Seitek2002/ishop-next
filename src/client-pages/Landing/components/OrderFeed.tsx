@@ -1,16 +1,31 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { QrCode, ShoppingBag, Truck, UtensilsCrossed, type LucideIcon } from "lucide-react";
-import s from "./OrderFeed.module.scss";
+import { useEffect, useRef, useState } from 'react';
+import { QrCode, ShoppingBag, Truck, type LucideIcon } from 'lucide-react';
+import s from './OrderFeed.module.scss';
 
 // Illustrative notifications a store owner receives; cycles while the hero is on screen.
-const ORDERS: { icon: LucideIcon; title: string; meta: string; sum: string }[] = [
-  { icon: Truck, title: "Новый заказ №1042", meta: "Доставка", sum: "2 450 с" },
-  { icon: QrCode, title: "Оплачено по QR", meta: "Заказ №1041", sum: "1 180 с" },
-  { icon: UtensilsCrossed, title: "Заказ на стол №7", meta: "На месте", sum: "3 600 с" },
-  { icon: ShoppingBag, title: "Новый заказ №1043", meta: "Самовывоз", sum: "890 с" },
-];
+const ORDERS: { icon: LucideIcon; title: string; meta: string; sum: string }[] =
+  [
+    {
+      icon: Truck,
+      title: 'Новый заказ №1042',
+      meta: 'Доставка',
+      sum: '2 450 с',
+    },
+    {
+      icon: QrCode,
+      title: 'Оплачено по QR',
+      meta: 'Заказ №1041',
+      sum: '1 180 с',
+    },
+    {
+      icon: ShoppingBag,
+      title: 'Новый заказ №1043',
+      meta: 'Самовывоз',
+      sum: '890 с',
+    },
+  ];
 
 type Item = { key: number; idx: number };
 
@@ -22,7 +37,7 @@ export default function OrderFeed({ className }: { className?: string }) {
     const el = ref.current;
     if (!el) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setItems([{ key: 0, idx: 0 }]);
       return;
     }
@@ -51,12 +66,20 @@ export default function OrderFeed({ className }: { className?: string }) {
   }, []);
 
   return (
-    <div ref={ref} className={className ? `${s.feed} ${className}` : s.feed} aria-hidden>
+    <div
+      ref={ref}
+      className={className ? `${s.feed} ${className}` : s.feed}
+      aria-hidden
+    >
       {items.map((item, pos) => {
         const order = ORDERS[item.idx];
         const Icon = order.icon;
         return (
-          <div key={item.key} className={s.slot} style={{ "--pos": pos } as React.CSSProperties}>
+          <div
+            key={item.key}
+            className={s.slot}
+            style={{ '--pos': pos } as React.CSSProperties}
+          >
             <div className={s.note}>
               <span className={s.icon}>
                 <Icon size={18} strokeWidth={2.2} />

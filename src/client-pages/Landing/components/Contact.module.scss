@@ -1,0 +1,206 @@
+.section {
+  padding: clamp(96px, 16vh, 180px) 0;
+}
+
+.grid {
+  display: grid;
+  gap: 48px;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 7fr 5fr;
+    gap: 64px;
+    align-items: end;
+  }
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: clamp(36px, 6vw, 108px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.formSide {
+  min-height: 330px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.field {
+  position: relative;
+  margin-top: 6px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 0 12px;
+  border: 0;
+  border-bottom: 2px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-text), sans-serif;
+  font-weight: 600;
+  font-size: clamp(28px, 2.8vw, 44px);
+  letter-spacing: -0.02em;
+  outline: none;
+
+  &::placeholder {
+    color: var(--fg);
+    opacity: 0.28;
+  }
+}
+
+// Underline draws in from the left on focus.
+.underline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--fg);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease-out);
+
+  .input:focus + & {
+    transform: scaleX(1);
+  }
+
+  .field[data-error="true"] & {
+    transform: scaleX(1);
+    background: #a8123e;
+  }
+}
+
+.field[data-error="true"] {
+  animation: shake 0.45s;
+}
+
+.error {
+  min-height: 1.5em;
+  margin: 10px 0 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #8f0f35;
+}
+
+.submitWrap {
+  align-self: flex-start;
+}
+
+.submit {
+  height: 72px;
+  font-size: 18px;
+}
+
+.policy {
+  margin: 18px 0 0;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.call {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: var(--muted);
+
+  a {
+    color: var(--fg);
+  }
+}
+
+// Success state: a small printed ticket, echoing the offer receipt.
+.ticket {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 400px;
+  padding: 32px 28px 40px;
+  background: #fffcf6;
+  color: #1c0f24;
+  font-family: var(--font-receipt), monospace;
+  box-shadow: 0 30px 60px -30px rgba(28, 15, 36, 0.5);
+  animation: print 0.9s var(--ease-out) both;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -9px;
+    height: 10px;
+    background:
+      linear-gradient(-45deg, transparent 5px, #fffcf6 0) 0 0 / 10px 10px repeat-x,
+      linear-gradient(45deg, transparent 5px, #fffcf6 0) 0 0 / 10px 10px repeat-x;
+  }
+
+  button {
+    align-self: flex-start;
+    margin-top: 12px;
+    font-family: var(--font-text), sans-serif;
+  }
+}
+
+.ticketTitle {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+}
+
+.ticketPhone {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ticketText {
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+@keyframes shake {
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes print {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-30px);
+  }
+  to {
+    clip-path: inset(0 0 -20px 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field[data-error="true"],
+  .ticket {
+    animation: none;
+  }
+}

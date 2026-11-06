@@ -1,0 +1,474 @@
+// "pinned" = desktop with motion allowed (mirrors the matchMedia in Included.tsx).
+$pinned: "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
+$static: "(max-width: 1023px), (prefers-reduced-motion: reduce)";
+
+.section {
+  --paper: #fffcf6;
+  --paper-ink: #1c0f24;
+  --paper-w: 400px;
+  position: relative;
+}
+
+.pin {
+  @media #{$static} {
+    padding: clamp(96px, 14vh, 160px) 0;
+  }
+
+  @media #{$pinned} {
+    height: 100svh;
+    min-height: 680px;
+  }
+}
+
+.layout {
+  display: grid;
+  gap: 56px;
+
+  @media #{$pinned} {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 48px;
+    height: 100%;
+  }
+}
+
+// ---------- Left column ----------
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+
+  @media #{$pinned} {
+    justify-content: space-between;
+    padding: 132px 0 56px;
+  }
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+// Only true where the receipt actually prints on scroll.
+.scrollHint {
+  @media #{$static} {
+    display: none;
+  }
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  @media #{$static} {
+    display: none;
+  }
+}
+
+.counter {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  overflow: hidden;
+  font-family: var(--font-display), sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.counterNow {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 1;
+  color: var(--accent);
+  animation: counter 0.6s var(--ease-out);
+}
+
+.counterAll {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.detailBody {
+  min-height: 8.6em;
+  animation: detail 0.7s var(--ease-out);
+}
+
+.detailTitle {
+  margin: 0 0 10px;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  font-size: clamp(22px, 1.9vw, 30px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+.detailText {
+  margin: 0;
+  max-width: 30em;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.segments {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 6px;
+}
+
+.seg {
+  position: relative;
+  height: 22px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--line);
+    transform: translateY(-50%);
+    transition:
+      background-color 0.4s,
+      height 0.3s var(--ease-out);
+  }
+
+  &[data-on="true"]::before {
+    background: var(--fg);
+  }
+
+  &[data-current="true"]::before {
+    background: var(--accent);
+    height: 6px;
+  }
+
+  &:hover::before {
+    height: 8px;
+  }
+}
+
+// ---------- Receipt ----------
+
+.right {
+  position: relative;
+
+  @media #{$pinned} {
+    height: 100%;
+  }
+}
+
+.window {
+  @media #{$pinned} {
+    position: absolute;
+    inset: 0 0 78px;
+    z-index: 1;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, transparent 0, #000 22%);
+  }
+}
+
+.paper {
+  position: relative;
+  width: min(var(--paper-w), 100%);
+  margin-inline: auto;
+  padding: 30px 28px 96px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--font-receipt), ui-monospace, monospace;
+  font-size: 13.5px;
+  line-height: 1.55;
+  box-shadow:
+    0 30px 60px -30px rgba(0, 0, 0, 0.7),
+    inset 0 -40px 40px -40px rgba(28, 15, 36, 0.12);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 3px,
+    rgba(28, 15, 36, 0.012) 3px 4px
+  );
+
+  // Torn top edge.
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -9px;
+    height: 10px;
+    background:
+      linear-gradient(-45deg, var(--paper) 5px, transparent 0) 0 5px / 10px 10px repeat-x,
+      linear-gradient(45deg, var(--paper) 5px, transparent 0) 0 5px / 10px 10px repeat-x;
+  }
+
+  @media #{$pinned} {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: var(--paper-w);
+    margin-left: calc(var(--paper-w) / -2);
+    will-change: transform;
+  }
+
+  @media #{$static} {
+    max-width: 440px;
+  }
+}
+
+.rHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 1.5px dashed rgba(28, 15, 36, 0.35);
+}
+
+.rLogo {
+  width: 30px;
+  margin-bottom: 8px;
+  color: var(--paper-ink);
+  --logo-inner: var(--paper);
+}
+
+.rBrand {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+}
+
+.rTitle {
+  margin-bottom: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.rMeta {
+  width: 100%;
+  margin: 0;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  dt {
+    opacity: 0.6;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.items {
+  margin: 0;
+  padding: 14px 0;
+  list-style: none;
+  border-bottom: 1.5px dashed rgba(28, 15, 36, 0.35);
+}
+
+.item {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 8px;
+  padding: 3px 0;
+
+  @media #{$pinned} {
+    // Thermal "developing": a line darkens once it is fully out of the printer.
+    color: rgba(28, 15, 36, 0.3);
+    transition: color 0.6s;
+
+    &[data-printed="true"] {
+      color: var(--paper-ink);
+    }
+  }
+
+  @media #{$static} {
+    padding: 6px 0;
+  }
+}
+
+.num {
+  opacity: 0.5;
+}
+
+.name {
+  font-weight: 500;
+}
+
+.leader {
+  flex: 1;
+  min-width: 16px;
+  border-bottom: 1.5px dotted currentColor;
+  opacity: 0.4;
+  transform: translateY(-4px);
+}
+
+.val {
+  font-weight: 700;
+}
+
+.desc {
+  flex-basis: 100%;
+  padding: 2px 0 4px 2.6em;
+  font-family: var(--font-text), sans-serif;
+  font-size: 13.5px;
+  line-height: 1.45;
+  opacity: 0.72;
+
+  @media #{$pinned} {
+    display: none;
+  }
+}
+
+.totals {
+  margin: 0;
+  padding: 14px 0;
+  border-bottom: 1.5px dashed rgba(28, 15, 36, 0.35);
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  div:first-child {
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  dt {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 700;
+  }
+}
+
+.qrRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0 12px;
+  font-size: 12.5px;
+  line-height: 1.45;
+
+  svg {
+    flex-shrink: 0;
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  &:hover svg {
+    transform: scale(1.06) rotate(-3deg);
+  }
+}
+
+.thanks {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+// Lands in its own blank strip at the foot of the receipt, never over the terms.
+.stamp {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+  width: fit-content;
+  margin-inline: auto;
+  padding: 8px 14px;
+  border: 3px solid #854c9d;
+  border-radius: 10px;
+  outline: 1.5px solid #854c9d;
+  outline-offset: 3px;
+  color: #854c9d;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: rotate(-12deg);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+// ---------- Printer ----------
+
+.printer {
+  display: none;
+
+  @media #{$pinned} {
+    position: absolute;
+    left: 50%;
+    bottom: 40px;
+    z-index: 2;
+    display: block;
+    width: calc(var(--paper-w) + 72px);
+    height: 48px;
+    border-radius: 16px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #3a2646, #21132a);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 24px 40px -18px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.slot {
+  position: absolute;
+  top: 9px;
+  left: 26px;
+  right: 26px;
+  height: 7px;
+  border-radius: 4px;
+  background: #07030a;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.9);
+}
+
+.led {
+  position: absolute;
+  right: 22px;
+  bottom: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffd15c;
+  box-shadow: 0 0 10px #ffd15c;
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes counter {
+  from {
+    transform: translateY(70%);
+    opacity: 0;
+  }
+}
+
+@keyframes detail {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}

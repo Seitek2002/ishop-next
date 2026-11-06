@@ -1,0 +1,184 @@
+$spin: 90s;
+
+.title {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.orbitWrap {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 18px 0 8px;
+}
+
+.orbit {
+  position: relative;
+  width: min(100%, 440px);
+  aspect-ratio: 1;
+  animation: spin $spin linear infinite;
+
+  &[data-paused="true"],
+  &[data-paused="true"] .nodeInner,
+  &[data-paused="true"] .coreInner {
+    animation-play-state: paused;
+  }
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.track {
+  fill: none;
+  stroke: var(--hair);
+  stroke-width: 0.3;
+}
+
+// Dashes flow outward from the hub: data leaving iShop for each service.
+.line {
+  stroke: rgba(133, 76, 157, 0.35);
+  stroke-width: 0.35;
+  stroke-dasharray: 1 2;
+  stroke-linecap: round;
+  animation: flow 1.4s linear infinite;
+  transition:
+    stroke 0.3s,
+    stroke-width 0.3s,
+    opacity 0.3s;
+
+  &[data-on="true"] {
+    stroke: #854c9d;
+    stroke-width: 0.8;
+  }
+
+  &[data-dim="true"] {
+    opacity: 0.25;
+  }
+}
+
+.node {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+}
+
+.nodeInner {
+  display: block;
+  padding: 8px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--hair);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px -12px rgba(28, 15, 36, 0.4);
+  animation: spin $spin linear infinite reverse;
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    scale 0.5s var(--ease-out);
+
+  .node[data-on="true"] & {
+    background: var(--ink);
+    color: #fffcf6;
+    scale: 1.12;
+  }
+
+  @media (max-width: 520px) {
+    padding: 6px 9px;
+    font-size: 11px;
+  }
+}
+
+.core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+
+  // Two expanding rings: the hub is live.
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid #854c9d;
+    animation: pulse 2.8s var(--ease-out) infinite;
+  }
+
+  &::after {
+    animation-delay: 1.4s;
+  }
+}
+
+.coreInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #854c9d;
+  box-shadow: 0 20px 40px -16px rgba(91, 46, 115, 0.8);
+  animation: spin $spin linear infinite reverse;
+}
+
+.coreLogo {
+  width: 38%;
+  color: #fffcf6;
+  --logo-inner: #854c9d;
+}
+
+.caption {
+  min-height: 3em;
+  margin: 12px 0 0;
+  font-size: 15px;
+  text-align: center;
+  color: var(--soft);
+
+  b {
+    color: var(--ink);
+    font-weight: 700;
+  }
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -3;
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit,
+  .nodeInner,
+  .coreInner,
+  .line,
+  .core::before,
+  .core::after {
+    animation: none;
+  }
+}

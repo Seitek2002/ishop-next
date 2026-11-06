@@ -1,0 +1,210 @@
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding: 118px 0 56px;
+  overflow: hidden;
+
+  @media (min-width: 1024px) {
+    min-height: max(100svh, 760px);
+    padding-bottom: 64px;
+  }
+}
+
+// Saffron light that trails the pointer (position set from Hero.tsx).
+.glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(520px circle at var(--mx, 70%) var(--my, 40%), rgba(255, 209, 92, 0.2), transparent 62%),
+    radial-gradient(1100px circle at 90% 115%, rgba(28, 15, 36, 0.38), transparent 60%),
+    radial-gradient(700px circle at -10% -20%, rgba(255, 252, 246, 0.1), transparent 60%);
+  // Fade out before the section edge so there is no seam with the next section.
+  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+}
+
+.inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.letterhead {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+  color: var(--muted);
+  animation: fadeIn 1s 0.1s both;
+
+  @media (max-width: 640px) {
+    font-size: 14px;
+  }
+}
+
+.place {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.title {
+  position: relative;
+  z-index: 3;
+  margin: clamp(28px, 6vh, 72px) 0 0;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 9.4vw, 64px);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  will-change: transform;
+
+  @media (min-width: 1024px) {
+    font-size: clamp(64px, 6.7vw, 136px);
+  }
+}
+
+// Each line rises out of its own mask.
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.lineInner {
+  display: block;
+  transform-origin: 0 100%;
+  animation: rise 1.3s var(--ease-out) both;
+  animation-delay: calc(0.18s + var(--i) * 0.11s);
+}
+
+.bottom {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 540px;
+  margin-top: 40px;
+
+  @media (min-width: 1024px) {
+    margin-top: auto;
+    padding-top: 48px;
+  }
+}
+
+.lead {
+  margin: 0;
+  font-size: clamp(17px, 1.25vw, 20px);
+  line-height: 1.5;
+  color: var(--muted);
+  text-wrap: pretty;
+  animation: fadeUp 1s var(--ease-out) 0.7s both;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 32px;
+  animation: fadeUp 1s var(--ease-out) 0.82s both;
+}
+
+// ---------- Phone stage ----------
+
+.stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  margin-top: 72px;
+  padding-inline: var(--gutter);
+  will-change: transform;
+
+  @media (min-width: 1024px) {
+    position: absolute;
+    top: 150px;
+    right: calc(var(--gutter) + 3vw);
+    bottom: 48px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+}
+
+.stageIntro {
+  position: relative;
+  animation: phoneIn 1.6s var(--ease-out) 0.35s both;
+}
+
+.tilt {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.feed {
+  position: absolute;
+  z-index: 2;
+  top: -36px;
+  left: 50%;
+  width: min(300px, 86vw);
+  transform: translateX(-50%);
+
+  // Sits in the free space left of the phone, overlapping its edge only slightly.
+  @media (min-width: 1024px) {
+    top: 64%;
+    left: auto;
+    right: 86%;
+    width: 300px;
+    transform: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(108%) rotate(5deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes phoneIn {
+  from {
+    opacity: 0;
+    transform: translateY(26%) rotate(9deg) scale(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letterhead,
+  .lineInner,
+  .lead,
+  .actions,
+  .stageIntro {
+    animation: none;
+  }
+}

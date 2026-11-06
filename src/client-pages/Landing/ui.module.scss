@@ -1,0 +1,316 @@
+// Shared tokens and primitives for the landing page.
+
+.root {
+  --plum: #1c0f24;
+  --purple: #854c9d;
+  --purple-deep: #5b2e73;
+  --lavender: #ece4f2;
+  --milk: #fffcf6;
+  --saffron: #ffd15c;
+
+  // Active theme — initial values match the hero (purple); GSAP tweens them on scroll.
+  --bg: #854c9d;
+  --fg: #fffcf6;
+  --muted: rgba(255, 252, 246, 0.84);
+  --line: rgba(255, 252, 246, 0.26);
+  --accent: #ffd15c;
+  --accent-fg: #1c0f24;
+  --hover: #fffcf6;
+  --hover-fg: #5b2e73;
+  --logo-inner: #854c9d;
+
+  --gutter: clamp(16px, 4vw, 56px);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  position: relative;
+  isolation: isolate; // keeps .backdrop (z-index: -1) above the page but under content
+  min-height: 100vh;
+  color: var(--fg);
+  font-family: var(--font-text), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  font-feature-settings: "ss01", "cv11";
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 4px;
+  }
+
+  // Film grain keeps the flat brand colors from looking like a template.
+  &::after {
+    content: "";
+    position: fixed;
+    inset: -100px;
+    z-index: 90;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    animation: grain 1.2s steps(6) infinite;
+  }
+
+  // Custom cursor replaces the native one on fine pointers only (set by <Cursor />).
+  &[data-cursor="on"] {
+    &,
+    * {
+      cursor: none;
+    }
+
+    input[type="tel"],
+    input[type="text"] {
+      cursor: text;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      animation: none;
+    }
+  }
+}
+
+// Element resets at zero specificity so component classes always win.
+:where(.root) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(.root) button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-40px, 30px); }
+  40% { transform: translate(30px, -50px); }
+  60% { transform: translate(-60px, -20px); }
+  80% { transform: translate(50px, 40px); }
+  100% { transform: translate(0, 0); }
+}
+
+// Page colour. A single fixed layer, so the cross-fade between section themes repaints
+// one element instead of restyling the page.
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg);
+  pointer-events: none;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1680px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.h2 {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: clamp(30px, 4.4vw, 74px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.lead {
+  margin: 0;
+  max-width: 34em;
+  font-size: clamp(17px, 1.3vw, 21px);
+  line-height: 1.5;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+// Hidden from sight, available to screen readers.
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Skip link: hidden until focused from the keyboard.
+.skip {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  z-index: 200;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--fg);
+  color: var(--bg);
+  font-weight: 600;
+  transform: translateY(-160%);
+  transition: transform 0.3s var(--ease-out);
+
+  &:focus-visible {
+    transform: none;
+  }
+}
+
+// ---------- Buttons ----------
+
+// Text that rolls up to a copy of itself on hover.
+.roll {
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1.25;
+  height: 1.25em;
+  vertical-align: top;
+
+  > span {
+    display: block;
+    text-shadow: 0 1.25em currentColor;
+    transition: transform 0.55s var(--ease-out);
+  }
+}
+
+.btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  height: 64px;
+  padding: 0 10px 0 30px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+  font-size: 17px;
+  white-space: nowrap;
+  transition: color 0.45s var(--ease-out);
+
+  // Fill grows from the point where the pointer entered (--x/--y set in Landing).
+  &::before {
+    content: "";
+    position: absolute;
+    left: var(--x, 50%);
+    top: var(--y, 100%);
+    z-index: -1;
+    width: 0;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--hover);
+    transform: translate(-50%, -50%);
+    transition: width 0.7s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--hover-fg);
+
+      &::before {
+        width: 280%;
+      }
+
+      .roll > span {
+        transform: translateY(-1.25em);
+      }
+
+      .btnIcon {
+        background: var(--hover-fg);
+        color: var(--hover);
+      }
+
+      .btnIcon svg:first-child {
+        transform: translate(150%, -150%);
+      }
+
+      .btnIcon svg:last-child {
+        transform: translate(0, 0);
+      }
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.btnSm {
+  height: 46px;
+  padding: 0 22px;
+  font-size: 15px;
+}
+
+.btnIcon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-fg);
+  color: var(--accent);
+  overflow: hidden;
+  transition:
+    background 0.45s var(--ease-out),
+    color 0.45s var(--ease-out);
+
+  svg {
+    grid-area: 1 / 1;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.55s var(--ease-out);
+  }
+
+  svg:last-child {
+    transform: translate(-150%, 150%);
+  }
+}
+
+// Underlined text link whose underline redraws from the left on hover.
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 6px;
+  font-weight: 600;
+  background: linear-gradient(currentColor, currentColor) no-repeat 100% 100% / 100% 1.5px;
+
+  @media (hover: hover) {
+    &:hover {
+      animation: underline 0.8s var(--ease-out);
+    }
+  }
+}
+
+@keyframes underline {
+  0% { background-size: 100% 1.5px; background-position: 100% 100%; }
+  45% { background-size: 0% 1.5px; background-position: 100% 100%; }
+  46% { background-size: 0% 1.5px; background-position: 0% 100%; }
+  100% { background-size: 100% 1.5px; background-position: 0% 100%; }
+}
+
+.magnetic {
+  display: inline-block;
+  will-change: transform;
+}

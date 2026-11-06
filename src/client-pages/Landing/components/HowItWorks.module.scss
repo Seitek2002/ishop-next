@@ -1,0 +1,173 @@
+.section {
+  padding: clamp(96px, 16vh, 180px) 0;
+}
+
+.head {
+  display: grid;
+  gap: 22px;
+  margin-bottom: clamp(40px, 7vh, 80px);
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 7fr 5fr;
+    align-items: end;
+    gap: 48px;
+  }
+}
+
+.layout {
+  display: grid;
+  gap: 28px;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 48px;
+    align-items: start;
+  }
+}
+
+// ---------- Tabs ----------
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  @media (min-width: 1024px) {
+    flex-direction: column;
+    gap: 0;
+    overflow: visible;
+    border-top: 1px solid var(--line);
+  }
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  text-align: left;
+
+  @media (max-width: 1023px) {
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    transition:
+      background-color 0.4s,
+      color 0.4s;
+
+    &[aria-selected="true"] {
+      background: var(--fg);
+      color: var(--bg);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    padding: 28px 0 28px 28px;
+    border-bottom: 1px solid var(--line);
+
+    // Active marker grows down the left edge.
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 28px;
+      width: 3px;
+      height: calc(100% - 56px);
+      border-radius: 2px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.6s var(--ease-out);
+    }
+
+    &[aria-selected="true"]::before {
+      transform: scaleY(1);
+    }
+  }
+}
+
+.tabTitle {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  transition:
+    color 0.4s,
+    transform 0.6s var(--ease-out);
+
+  @media (min-width: 1024px) {
+    font-size: clamp(26px, 2.4vw, 40px);
+    color: var(--muted);
+
+    .tab[aria-selected="true"] & {
+      color: var(--fg);
+    }
+
+    .tab[aria-selected="false"]:hover & {
+      color: var(--fg);
+      transform: translateX(10px);
+    }
+  }
+}
+
+// Description expands under the active tab (grid-rows trick, no height measuring).
+.tabTextWrap {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.6s var(--ease-out);
+
+    .tab[aria-selected="true"] & {
+      grid-template-rows: 1fr;
+    }
+  }
+}
+
+.tabText {
+  overflow: hidden;
+  max-width: 30em;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+
+  &::before {
+    content: "";
+    display: block;
+    height: 14px;
+  }
+}
+
+// ---------- Panels ----------
+
+.stage {
+  display: grid;
+}
+
+.panel {
+  grid-area: 1 / 1;
+  min-width: 0;
+  transition:
+    opacity 0.5s,
+    transform 0.8s var(--ease-out),
+    visibility 0s 0.5s;
+
+  &[data-active="false"] {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+
+  &[data-active="true"] {
+    transition-delay: 0s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition: none;
+  }
+}

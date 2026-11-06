@@ -1,0 +1,117 @@
+.section {
+  padding: clamp(96px, 16vh, 180px) 0;
+}
+
+.title {
+  max-width: 14em;
+  margin-bottom: clamp(48px, 9vh, 96px);
+}
+
+.listWrap {
+  position: relative;
+}
+
+// Track runs along the dots: horizontal on desktop, vertical on phones.
+.track {
+  position: absolute;
+  background: var(--line);
+
+  @media (min-width: 1024px) {
+    top: 7px;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  @media (max-width: 1023px) {
+    top: 8px;
+    bottom: 8px;
+    left: 7px;
+    width: 2px;
+  }
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: 0 0;
+}
+
+.list {
+  position: relative;
+  display: grid;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+}
+
+.step {
+  position: relative;
+
+  @media (min-width: 1024px) {
+    padding-top: 44px;
+  }
+
+  @media (max-width: 1023px) {
+    padding-left: 44px;
+  }
+}
+
+.dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--bg);
+  transition:
+    background-color 0.4s,
+    border-color 0.4s,
+    transform 0.6s var(--ease-out);
+
+  .step[data-reached="true"] & {
+    border-color: var(--accent);
+    background: var(--accent);
+    transform: scale(1.25);
+  }
+}
+
+.num {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.stepTitle {
+  margin: 0 0 12px;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: clamp(22px, 1.9vw, 30px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+.text {
+  margin: 0;
+  max-width: 22em;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transform: none;
+  }
+}

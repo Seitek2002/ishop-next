@@ -1,0 +1,59 @@
+.letter {
+  padding: clamp(96px, 18vh, 200px) 0;
+}
+
+.grid {
+  display: grid;
+  gap: 28px;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 3fr;
+    column-gap: 48px;
+  }
+}
+
+.greeting {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--muted);
+
+  @media (min-width: 1024px) {
+    padding-top: 0.9em;
+  }
+}
+
+.body {
+  margin: 0;
+  max-width: 24em;
+  font-weight: 500;
+  font-size: clamp(25px, 3.15vw, 52px);
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+  text-wrap: pretty;
+}
+
+.word {
+  will-change: opacity;
+}
+
+.sign {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--muted);
+
+  @media (min-width: 1024px) {
+    grid-column: 2;
+  }
+}
+
+.signLogo {
+  width: 34px;
+  color: var(--purple);
+  --logo-inner: var(--bg);
+}

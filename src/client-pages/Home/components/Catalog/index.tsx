@@ -5,6 +5,7 @@ import { useGetProductsQuery } from 'api/Products.api';
 import { IFoodCart, IProduct } from 'types/products.types';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { vibrateClick } from 'utils/haptics';
+import { sortProductsForCatalog } from 'utils/productSort';
 import CatalogCard from 'components/Cards/Catalog';
 import FoodDetail from 'components/FoodDetail';
 
@@ -106,24 +107,7 @@ const Catalog: FC<IProps> = ({
             return allIds.includes(selectedCategory);
           });
 
-    const hasPhoto = (p: IProduct) =>
-      Boolean(p.productPhoto || p.productPhotoSmall || p.productPhotoLarge);
-
-    // In-stock first, then items with photo; stable tie-breaker by name then id
-    return [...base].sort((a, b) => {
-      const sa = Number.isFinite(a.quantity) && a.quantity > 0 ? 1 : 0;
-      const sb = Number.isFinite(b.quantity) && b.quantity > 0 ? 1 : 0;
-      if (sb !== sa) return sb - sa;
-
-      const ha = hasPhoto(a) ? 1 : 0;
-      const hb = hasPhoto(b) ? 1 : 0;
-      if (hb !== ha) return hb - ha;
-
-      const an = (a.productName || '').localeCompare(b.productName || '');
-      if (an !== 0) return an;
-
-      return (a.id || 0) - (b.id || 0);
-    });
+    return sortProductsForCatalog(base);
   }, [items, selectedCategory]);
 
   const nothingSrc = typeof nothing === 'string' ? nothing : (nothing as unknown as { src?: string })?.src || '/assets/images/not-found-products.png';
